@@ -5,22 +5,15 @@
 
 int main() {
     
-    
-    
     Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/lena1.tif");
 
+    Compressor compressor = Compressor();
+    
     img.displayImage();
 
-    Compressor compressor = Compressor();
+    Image compressedImage = compressor.compress(img, 1);
 
-    // get the DFT of the image
-    cv::Mat dftImage = compressor.DFT(img.getImage());
+    compressedImage.displayImage();
 
-    // get the IDFT of the image
-    Image reconImg = Image(compressor.IDFT(dftImage));
-
-    // display the IDFT image
-    reconImg.displayImage();
-    
     return 0;
 }
