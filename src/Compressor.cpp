@@ -1,22 +1,16 @@
 #include "Compressor.h"
 
+
 Compressor::Compressor()
 {
 }
 
-cv::Mat Compressor::DFT(const cv::Mat& img) const
+cv::Mat Compressor::computeDFT(const cv::Mat& img) const
 {   
     // TODO: add padding for optimal size for effcent DFT
+    cv::Mat floatImage = convertTOFloatMat(img);
     
-    // convert to float
-    cv::Mat floatImage;
-    img.convertTo(floatImage, CV_32F);
-
-
-    // Create a complex image with two channels: real and imaginary
-    cv::Mat planes[] = { floatImage, cv::Mat::zeros(img.size(), CV_32F) };
-    cv::Mat complexImage;
-    cv::merge(planes, 2, complexImage); //dft takes a complex image as input, so we need to merge the two channels where the Imaginary part is zero
+    cv::Mat complexImage = prepareComplex2channelMat(floatImage);
 
     // Compute DFT
     cv::dft(complexImage, complexImage);
@@ -24,9 +18,25 @@ cv::Mat Compressor::DFT(const cv::Mat& img) const
     return complexImage;
 }
 
+cv::Mat Compressor::prepareComplex2channelMat(const cv::Mat& floatImage) const
+{   
+
+    cv::Mat planes[] = { floatImage, cv::Mat::zeros(floatImage.size(), CV_32F) };
+    cv::Mat complexImage;
+    cv::merge(planes, 2, complexImage);
+
+    return complexImage;
+}
+
+cv::Mat Compressor::convertTOFloatMat(const Image& img) const
+{
+    cv::Mat floatImage;
+    img.getImage().convertTo(floatImage, CV_32F);
+    return floatImage;
+}
 
 
-cv::Mat Compressor::IDFT(const cv::Mat& complexImage) const
+cv::Mat Compressor::computeInverseDFT(const cv::Mat& complexImage) const
 {
     cv::Mat inverseTransform;
     cv::dft(complexImage, inverseTransform, cv::DFT_INVERSE | cv::DFT_REAL_OUTPUT);
@@ -58,7 +68,7 @@ float const Compressor::IntensityThresholdValue(const cv::Mat& magnitude, float 
 
     cv::sort(flattened, sorted, cv::SORT_DESCENDING);
 
-    float threshold = sorted.at<float>(sorted.cols * percentile / PERCENTILE_SCALE);
+    float threshold = sorted.at<float>(static_cast<int>(sorted.cols * (percentile / PERCENTILE_SCALE)));
 
     return threshold;
 }
@@ -88,6 +98,8 @@ cv::Mat Compressor::applyMask(const cv::Mat& complexImage, const cv::Mat& mask) 
     cv::Mat maskFloat;
     mask.convertTo(maskFloat, CV_32F);  // Convert to float
 
+    // cv::Mat maskFloat = convertTOFloatMat(mask);
+
     cv::Mat maskedPlanes[] = { planes[0].mul(maskFloat), planes[1].mul(maskFloat) };
 
     cv::Mat maskedComplexImage;
@@ -96,23 +108,25 @@ cv::Mat Compressor::applyMask(const cv::Mat& complexImage, const cv::Mat& mask) 
     return maskedComplexImage;
 }
 
-Image Compressor::compress(const Image& image, float percentile) const {
-    
-    cv::Mat DFTImage = DFT(image.getImage());
-
+SparseRepresentations Compressor::compress(const Image& image, float percentile) const {
+    cv::Mat DFTImage = computeDFT(image.getImage());
     cv::Mat magnitude = Magnitude(DFTImage);
-    
     float threshold = IntensityThresholdValue(magnitude, percentile);
-
     cv::Mat mask = MakeSubSamplingMask(magnitude, threshold);
-
     cv::Mat maskedDFTImage = applyMask(DFTImage, mask);
 
-    cv::Mat compressedImage = IDFT(maskedDFTImage);
+    SparseRepresentations sparseRepr = SparseRepresentations(maskedDFTImage);
 
-    Image compressedImageObj = Image(compressedImage);
+    return sparseRepr;
+}
 
-    return compressedImageObj;
+Image Compressor::decompress(const SparseRepresentations & sparseRepr) const
+{
+    cv::Mat decodedSparceCompresDFTimage = sparseRepr.convertToDenseComplexMatrix();
+
+    cv::Mat decodedSparceCompresImage = computeInverseDFT(decodedSparceCompresDFTimage);
+
+    return Image(decodedSparceCompresImage);
 }
     
 
