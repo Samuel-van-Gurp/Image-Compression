@@ -1,5 +1,6 @@
 #include "Image.h"
 #include "Compressor.h"
+#include "SparseRepresentation.h"
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
@@ -11,9 +12,11 @@ int main() {
     
     img.displayImage();
 
-    Image compressedImage = compressor.compress(img, 1);
+    SparseRepresentations sparseRepr = compressor.compress(img, 1);
 
-    compressedImage.displayImage();
+    Image decompressedImage = compressor.decompress(sparseRepr);
+
+    decompressedImage.displayImage();
 
     return 0;
 }
