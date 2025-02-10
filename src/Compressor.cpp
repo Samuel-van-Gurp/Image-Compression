@@ -108,19 +108,19 @@ cv::Mat Compressor::applyMask(const cv::Mat& complexImage, const cv::Mat& mask) 
     return maskedComplexImage;
 }
 
-SparseRepresentations Compressor::compress(const Image& image, float percentile) const {
+SparseRepresentation Compressor::compress(const Image& image, float percentile) const {
     cv::Mat DFTImage = computeDFT(image.getImage());
     cv::Mat magnitude = Magnitude(DFTImage);
     float threshold = IntensityThresholdValue(magnitude, percentile);
     cv::Mat mask = MakeSubSamplingMask(magnitude, threshold);
     cv::Mat maskedDFTImage = applyMask(DFTImage, mask);
 
-    SparseRepresentations sparseRepr = SparseRepresentations(maskedDFTImage);
+    SparseRepresentation sparseRepr = SparseRepresentation(maskedDFTImage);
 
     return sparseRepr;
 }
 
-Image Compressor::decompress(const SparseRepresentations & sparseRepr) const
+Image Compressor::decompress(const SparseRepresentation & sparseRepr) const
 {
     cv::Mat decodedSparceCompresDFTimage = sparseRepr.convertToDenseComplexMatrix();
 

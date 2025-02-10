@@ -7,8 +7,8 @@ class Compressor
 public:
     Compressor();
     
-    SparseRepresentations compress(const Image & image, float percentile) const;
-    Image decompress(const SparseRepresentations & sparseRepr) const;
+    SparseRepresentation compress(const Image & image, float percentile) const;
+    Image decompress(const SparseRepresentation & sparseRepr) const;
 
 private:
     cv::Mat computeDFT(const cv::Mat& img) const;
