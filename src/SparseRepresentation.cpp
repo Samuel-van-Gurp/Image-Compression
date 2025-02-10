@@ -1,8 +1,7 @@
 #include "SparseRepresentation.h"
 
-SparseRepresentations::SparseRepresentations(const cv::Mat& maskedDFT)
-    : m_size(maskedDFT.size().width, maskedDFT.size().height)
-    , sparseElements()
+SparseRepresentation::SparseRepresentation(const cv::Mat &maskedDFT)
+    : m_OriginalSizeImage(maskedDFT.size().width, maskedDFT.size().height), m_sparseElements()
 {
     auto realImaginaryPair = splitComplexImage(maskedDFT);
     cv::Mat real = realImaginaryPair.first;
@@ -11,8 +10,14 @@ SparseRepresentations::SparseRepresentations(const cv::Mat& maskedDFT)
     fillRowColumnComplexValue(real, imagery);
 }
 
-void SparseRepresentations::fillRowColumnComplexValue(const cv::Mat& real, const cv::Mat& imagery){
-    
+SparseRepresentation::SparseRepresentation(const std::vector<std::vector<float>> &sparseElements, const std::pair<int, int> &size)
+    : m_OriginalSizeImage(size), m_sparseElements(sparseElements)
+{
+}
+
+void SparseRepresentation::fillRowColumnComplexValue(const cv::Mat &real, const cv::Mat &imagery)
+{
+
     for (int rowIndex = 0; rowIndex < real.rows; rowIndex++)
     {
         for (int columnIndex = 0; columnIndex < real.cols; columnIndex++)
@@ -25,35 +30,39 @@ void SparseRepresentations::fillRowColumnComplexValue(const cv::Mat& real, const
     }
 }
 
-void SparseRepresentations::setRowColumnValueElement(const cv::Mat& real, const cv::Mat& imagery, int rowIndex, int columnIndex){
-    
-    sparseElements.push_back({(float)rowIndex, (float)columnIndex, real.at<float>(rowIndex, columnIndex), imagery.at<float>(rowIndex, columnIndex)});
+void SparseRepresentation::setRowColumnValueElement(const cv::Mat &real, const cv::Mat &imagery, int rowIndex, int columnIndex)
+{
+
+    m_sparseElements.push_back({(float)rowIndex, (float)columnIndex, real.at<float>(rowIndex, columnIndex), imagery.at<float>(rowIndex, columnIndex)});
 }
 
-bool SparseRepresentations::isElementZero(const cv::Mat& real, const cv::Mat& imagery, int rowIndex, int columnIndex){
-    
+bool SparseRepresentation::isElementZero(const cv::Mat &real, const cv::Mat &imagery, int rowIndex, int columnIndex)
+{
+
     return real.at<float>(rowIndex, columnIndex) == 0 || imagery.at<float>(rowIndex, columnIndex) == 0;
 }
 
-std::pair<cv::Mat, cv::Mat> SparseRepresentations::splitComplexImage(const cv::Mat& complexImage) const
+std::pair<cv::Mat, cv::Mat> SparseRepresentation::splitComplexImage(const cv::Mat &complexImage) const
 {
     cv::Mat planes[2];
-    cv::split(complexImage, planes); 
+    cv::split(complexImage, planes);
 
-    return std::make_pair(planes[0], planes[1]);;
+    return std::make_pair(planes[0], planes[1]);
+    ;
 }
 
-cv::Mat SparseRepresentations::convertToDenseComplexMatrix() const
-{ 
-    cv::Mat reconstructedRealImage = cv::Mat::zeros(m_size.first, m_size.second, CV_32FC1);
-    cv::Mat reconstructedImageryImage = cv::Mat::zeros(m_size.first, m_size.second, CV_32FC1);
+cv::Mat SparseRepresentation::convertToDenseComplexMatrix() const
+{
+    cv::Mat reconstructedRealImage = cv::Mat::zeros(m_OriginalSizeImage.first, m_OriginalSizeImage.second, CV_32FC1);
+    cv::Mat reconstructedImageryImage = cv::Mat::zeros(m_OriginalSizeImage.first, m_OriginalSizeImage.second, CV_32FC1);
 
-    for (int i = 0; i < sparseElements.size(); i++){
+    for (int i = 0; i < m_sparseElements.size(); i++)
+    {
 
-        int rowIndex = static_cast<int>(sparseElements[i][0]);
-        int columnIndex = static_cast<int>(sparseElements[i][1]);
-        float realValue = sparseElements[i][2];
-        float imageryValue = sparseElements[i][3];
+        int rowIndex = static_cast<int>(m_sparseElements[i][0]);
+        int columnIndex = static_cast<int>(m_sparseElements[i][1]);
+        float realValue = m_sparseElements[i][2];
+        float imageryValue = m_sparseElements[i][3];
 
         reconstructedRealImage.at<float>(rowIndex, columnIndex) = realValue;
         reconstructedImageryImage.at<float>(rowIndex, columnIndex) = imageryValue;
@@ -64,10 +73,20 @@ cv::Mat SparseRepresentations::convertToDenseComplexMatrix() const
     return complexImage;
 }
 
-cv::Mat SparseRepresentations::mergeRealAndImaginary(const cv::Mat& real, const cv::Mat& imaginary) const
-    {
-        std::vector<cv::Mat> channels = {real, imaginary};
-        cv::Mat complexImage;
-        cv::merge(channels, complexImage);
-        return complexImage;
-    }
+std::vector<std::vector<float>> SparseRepresentation::getSparseElements() const
+{
+    return m_sparseElements;
+}
+
+std::pair<int, int> SparseRepresentation::getOriginalSizeImage() const
+{
+    return m_OriginalSizeImage;
+}
+
+cv::Mat SparseRepresentation::mergeRealAndImaginary(const cv::Mat &real, const cv::Mat &imaginary) const
+{
+    std::vector<cv::Mat> channels = {real, imaginary};
+    cv::Mat complexImage;
+    cv::merge(channels, complexImage);
+    return complexImage;
+}
