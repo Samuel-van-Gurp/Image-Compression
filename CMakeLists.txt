@@ -16,6 +16,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 add_executable(MyCMakeProject src/main.cpp
                               src/Image.cpp
                               src/Compressor.cpp
-                              src/SparseRepresentation.cpp)
+                              src/SparseRepresentation.cpp
+                              src/StoringData.cpp)
 
 target_link_libraries(MyCMakeProject ${OpenCV_LIBS})
