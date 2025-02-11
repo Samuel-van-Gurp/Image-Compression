@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
 project(MyCMakeProject VERSION 1.0 LANGUAGES CXX)
 
 # Set C++ standard
@@ -17,6 +17,46 @@ add_executable(MyCMakeProject src/main.cpp
                               src/Image.cpp
                               src/Compressor.cpp
                               src/SparseRepresentation.cpp
-                              src/StoringData.cpp)
+                              src/StoringData.cpp
+                              src/DFT.cpp)
 
 target_link_libraries(MyCMakeProject ${OpenCV_LIBS})
+
+
+# -------------------------------------------
+# Google Test 
+# -------------------------------------------
+
+enable_testing()
+
+# Fetch google test
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
+)
+
+# Force shared runtime (optional, but recommended on Windows)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+# Create a test executable
+add_executable(MyTests
+    tests/test_main.cpp
+    tests/test_Image.cpp
+    tests/test_Compressor.cpp
+    tests/test_DFT.cpp
+
+    src/Image.cpp         # Add source files required for testing
+    src/Compressor.cpp
+    src/SparseRepresentation.cpp
+    src/StoringData.cpp
+    src/DFT.cpp
+)
+
+# Link GoogleTest and OpenCV to the test executable
+target_link_libraries(MyTests PRIVATE gtest_main ${OpenCV_LIBS})
+
+# Discover and register tests with CTest
+include(GoogleTest)
+gtest_discover_tests(MyTests)
