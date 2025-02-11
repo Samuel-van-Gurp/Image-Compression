@@ -1,18 +1,16 @@
 #include "Image.h"
 
-
-Image::Image(const cv::Mat & img)
+Image::Image(const cv::Mat &img)
     : image(img)
 {
 }
 
-Image::Image(const std::string & filepath)
+Image::Image(const std::string &filepath)
 {
     readToGrayScale(filepath);
 }
 
-
-void Image::readToGrayScale(const std::string & filenpath)
+void Image::readToGrayScale(const std::string &filenpath)
 {
     image = cv::imread(filenpath, cv::IMREAD_GRAYSCALE);
     if (image.empty())
@@ -21,8 +19,7 @@ void Image::readToGrayScale(const std::string & filenpath)
     }
 }
 
-
-void Image::displayImage() const
+void Image::displayImage(const std::string &title) const
 {
     cv::imshow("Image", image);
     cv::waitKey(0);
