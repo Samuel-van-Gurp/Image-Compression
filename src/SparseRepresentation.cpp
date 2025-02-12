@@ -1,9 +1,9 @@
 #include "SparseRepresentation.h"
 
-SparseRepresentation::SparseRepresentation(const cv::Mat &maskedDFT)
-    : m_OriginalSizeImage(maskedDFT.size().width, maskedDFT.size().height), m_sparseElements()
+SparseRepresentation::SparseRepresentation(const cv::Mat &FourierDomianImage)
+    : m_OriginalSizeImage(FourierDomianImage.size().height, FourierDomianImage.size().width), m_sparseElements()
 {
-    auto realImaginaryPair = splitComplexImage(maskedDFT);
+    auto realImaginaryPair = splitComplexImage(FourierDomianImage);
     cv::Mat real = realImaginaryPair.first;
     cv::Mat imagery = realImaginaryPair.second;
 
