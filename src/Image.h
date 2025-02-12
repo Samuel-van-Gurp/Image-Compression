@@ -12,7 +12,7 @@ public:
 
     void displayImage(const std::string &title = "Image") const;
 
-    cv::Mat getImage() const;
+    cv::Mat getImageMatrix() const;
 
     void setImage(cv::Mat img);
 

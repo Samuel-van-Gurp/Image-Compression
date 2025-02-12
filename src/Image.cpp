@@ -26,7 +26,7 @@ void Image::displayImage(const std::string &title) const
     cv::destroyAllWindows();
 }
 
-cv::Mat Image::getImage() const
+cv::Mat Image::getImageMatrix() const
 {
     return image;
 }
