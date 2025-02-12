@@ -10,12 +10,13 @@ float const Compressor::IntensityThresholdValue(const cv::Mat &magnitude, float 
     const float PERCENTILE_SCALE = 100.0f;
 
     cv::Mat flattened = magnitude.reshape(1, 1).clone();
-
     cv::Mat sorted;
-
     cv::sort(flattened, sorted, cv::SORT_DESCENDING);
 
-    float threshold = sorted.at<float>(static_cast<int>(sorted.cols * (percentile / PERCENTILE_SCALE)));
+    int index = static_cast<int>(sorted.cols * (percentile / PERCENTILE_SCALE));
+    index = std::min(index, sorted.cols - 1); // clap to range
+
+    float threshold = sorted.at<float>(index);
 
     return threshold;
 }
@@ -59,7 +60,7 @@ SparseRepresentation Compressor::compress(const Image &image, float percentile) 
 {
     DFT dft;
 
-    cv::Mat DFTImage = dft.computeDFT(image.getImage());
+    cv::Mat DFTImage = dft.computeDFT(image.getImageMatrix());
     cv::Mat magnitude = dft.Magnitude(DFTImage);
     float threshold = IntensityThresholdValue(magnitude, percentile);
     cv::Mat mask = MakeSubSamplingMask(magnitude, threshold);
