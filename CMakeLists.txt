@@ -46,6 +46,7 @@ add_executable(MyTests
     tests/test_Image.cpp
     tests/test_Compressor.cpp
     tests/test_DFT.cpp
+    tests/test_SparseRepresentation.cpp
 
     src/Image.cpp         # Add source files required for testing
     src/Compressor.cpp

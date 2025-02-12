@@ -19,6 +19,6 @@ TEST(ImageTests, ConstructorWithMat)
     Image img(mat);
 
     // Assert
-    EXPECT_EQ(img.getImage().size(), mat.size()); // Ensure the image size matches
-    EXPECT_EQ(img.getImage().type(), mat.type()); // Ensure the type is the same
+    EXPECT_EQ(img.getImageMatrix().size(), mat.size());
+    EXPECT_EQ(img.getImageMatrix().type(), mat.type());
 }
