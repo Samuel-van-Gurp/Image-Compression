@@ -4,7 +4,10 @@ project(MyCMakeProject VERSION 1.0 LANGUAGES CXX)
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(OpenCV_DIR "C:/Users/svangurp/opencv/build")
+
+if(WIN32) # check that we are on windows
+  set(OpenCV_DIR "C:/Users/svangurp/opencv/build")
+endif()
 
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
