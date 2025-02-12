@@ -16,7 +16,7 @@ private:
 
     std::pair<int, int> readOriginalImageSize(std::ifstream &inFile) const;
     void writeSparceRep(std::ofstream &outFile, const SparseRepresentation &sparceRep) const;
-    void writeSparseVectorLength(std::ofstream &outFile, const std::vector<std::vector<float>> SparceVec) const;
+    void writeSparseVectorLength(std::ofstream &outFile, const std::vector<ComplexRowColumnValue> &SparceVec) const;
     void hasSamuelExtensionErr(const std::string &fileName) const;
     bool openFileForWriting(const std::string &fileName, const std::string &filePath, std::ofstream &outFile) const;
     void writeOriginalImageSize(std::ofstream &outFile, const std::pair<int, int> &imageSize) const;
