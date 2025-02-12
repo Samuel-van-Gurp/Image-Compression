@@ -9,11 +9,10 @@ class SparseRepresentation
 public:
     static constexpr int CHANNELS_COMPLEX_VALUE_ROW_COLUMN = 4;
 
-    SparseRepresentation(const cv::Mat &maskedDFT);
+    explicit SparseRepresentation(const cv::Mat &maskedDFT);
     SparseRepresentation(const std::vector<std::vector<float>> &sparseElements, const std::pair<int, int> &size);
 
     cv::Mat convertToDenseComplexMatrix() const;
-
     std::vector<std::vector<float>> getSparseElements() const;
     std::pair<int, int> getOriginalSizeImage() const;
 
