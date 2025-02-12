@@ -1,9 +1,9 @@
 name: CI Build & Test
 
 on:
-  push:  # Runs on every push (includes commits)
+  push:  
     branches: [ main ]
-  pull_request:  # Runs on PRs to main
+  pull_request:  
     branches: [ main ]
 
 jobs:

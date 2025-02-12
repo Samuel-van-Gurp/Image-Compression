@@ -21,7 +21,8 @@ add_executable(MyCMakeProject src/main.cpp
                               src/Compressor.cpp
                               src/SparseRepresentation.cpp
                               src/StoringData.cpp
-                              src/DFT.cpp)
+                              src/DFT.cpp
+                              src/ComplexRowColumnValue.cpp)
 
 target_link_libraries(MyCMakeProject ${OpenCV_LIBS})
 
@@ -56,6 +57,7 @@ add_executable(MyTests
     src/SparseRepresentation.cpp
     src/StoringData.cpp
     src/DFT.cpp
+    src/ComplexRowColumnValue.cpp
 )
 
 # Link GoogleTest and OpenCV to the test executable

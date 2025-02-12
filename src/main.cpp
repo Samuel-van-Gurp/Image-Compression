@@ -14,7 +14,7 @@ int main()
 
     // img.displayImage();
 
-    SparseRepresentation sparseRepr = compressor.compress(img, 10);
+    SparseRepresentation sparseRepr = compressor.compress(img, 50);
 
     StoringData storingData = StoringData();
 
