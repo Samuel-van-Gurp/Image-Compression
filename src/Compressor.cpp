@@ -4,21 +4,30 @@ Compressor::Compressor()
 {
 }
 
-float const Compressor::IntensityThresholdValue(const cv::Mat &magnitude, float percentile) const
+float const Compressor::ComputeIntensityThreshold(const cv::Mat &magnitude, float percentile) const
 {
 
     const float PERCENTILE_SCALE = 100.0f;
 
-    cv::Mat flattened = magnitude.reshape(1, 1).clone();
+    cv::Mat flattened = magnitude.reshape(1, 1);
     cv::Mat sorted;
     cv::sort(flattened, sorted, cv::SORT_DESCENDING);
 
     int index = static_cast<int>(sorted.cols * (percentile / PERCENTILE_SCALE));
+
     index = std::min(index, sorted.cols - 1); // clap to range
 
     float threshold = sorted.at<float>(index);
 
     return threshold;
+}
+
+void validatePercentileRange(float percentile)
+{
+    if (percentile < 0.0f || percentile > 100.0f)
+    {
+        throw std::invalid_argument("Percentile must be between 0 and 100.");
+    }
 }
 
 cv::Mat Compressor::MakeSubSamplingMask(const cv::Mat &magnitude, float threshold) const
@@ -46,8 +55,6 @@ cv::Mat Compressor::applyMask(const cv::Mat &complexImage, const cv::Mat &mask) 
     cv::Mat maskFloat;
     mask.convertTo(maskFloat, CV_32F); // Convert to float
 
-    // cv::Mat maskFloat = convertTOFloatMat(mask);
-
     cv::Mat maskedPlanes[] = {planes[0].mul(maskFloat), planes[1].mul(maskFloat)};
 
     cv::Mat maskedComplexImage;
@@ -58,11 +65,13 @@ cv::Mat Compressor::applyMask(const cv::Mat &complexImage, const cv::Mat &mask) 
 
 SparseRepresentation Compressor::compress(const Image &image, float percentile) const
 {
+    validatePercentileRange(percentile);
+
     DFT dft;
 
     cv::Mat DFTImage = dft.computeDFT(image.getImageMatrix());
     cv::Mat magnitude = dft.Magnitude(DFTImage);
-    float threshold = IntensityThresholdValue(magnitude, percentile);
+    float threshold = ComputeIntensityThreshold(magnitude, percentile);
     cv::Mat mask = MakeSubSamplingMask(magnitude, threshold);
     cv::Mat maskedDFTImage = applyMask(DFTImage, mask);
 
