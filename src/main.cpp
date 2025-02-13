@@ -2,32 +2,33 @@
 #include "Compressor.h"
 #include "SparseRepresentation.h"
 #include "StoringData.h"
+#include "DCT/DCT.h"
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
 int main()
 {
 
-    Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
+        // Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
 
-    Compressor compressor = Compressor();
+    // Compressor compressor = Compressor();
 
-    // img.displayImage();
+    // // img.displayImage();
 
-    SparseRepresentation sparseRepr = compressor.compress(img, 50);
+    // SparseRepresentation sparseRepr = compressor.compress(img, 50);
 
-    StoringData storingData = StoringData();
+    // StoringData storingData = StoringData();
 
-    // std::cout<< "sparseRepr.getSize().first" << sparseRepr.getSize().first<<std::endl;
-    storingData.SaveFile("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/", sparseRepr);
+    // // std::cout<< "sparseRepr.getSize().first" << sparseRepr.getSize().first<<std::endl;
+    // storingData.SaveFile("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/", sparseRepr);
 
-    auto sparseReprloaded = storingData.LoadFile("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
+    // auto sparseReprloaded = storingData.LoadFile("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
 
-    // std::cout<< "sparseReprloaded.getSize().first" << sparseReprloaded.getSize().first<<std::endl;
+    // // std::cout<< "sparseReprloaded.getSize().first" << sparseReprloaded.getSize().first<<std::endl;
 
-    Image decompressedImage = compressor.decompress(sparseReprloaded);
+    // Image decompressedImage = compressor.decompress(sparseReprloaded);
 
-    decompressedImage.displayImage();
+    // decompressedImage.displayImage();
 
     return 0;
 }

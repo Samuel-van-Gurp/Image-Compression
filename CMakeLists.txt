@@ -22,7 +22,8 @@ add_executable(MyCMakeProject src/main.cpp
                               src/SparseRepresentation.cpp
                               src/StoringData.cpp
                               src/DFT.cpp
-                              src/ComplexRowColumnValue.cpp)
+                              src/ComplexRowColumnValue.cpp
+                              src/DCT/DCT.h)
 
 target_link_libraries(MyCMakeProject ${OpenCV_LIBS})
 
@@ -50,8 +51,10 @@ add_executable(MyTests
     tests/test_Image.cpp
     tests/test_Compressor.cpp
     tests/test_DFT.cpp
+    tests/test_DCT.cpp
     tests/test_SparseRepresentation.cpp
 
+    src/DCT/DCT.cpp
     src/Image.cpp         # Add source files required for testing
     src/Compressor.cpp
     src/SparseRepresentation.cpp

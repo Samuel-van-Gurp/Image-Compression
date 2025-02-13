@@ -65,15 +65,6 @@ SparseRepresentation StoringData::LoadFile(const std::string &fileName, const st
 
         // Create and store the ComplexRowColumnValue object
         SparceVec[i] = ComplexRowColumnValue(row, col, real, imag);
-
-        // size_t numCols = SparseRepresentation::CHANNELS_COMPLEX_VALUE_ROW_COLUMN;
-
-        // SparceVec[i].resize(numCols);
-
-        // if (numCols > 0)
-        // {
-        //     inFile.read(reinterpret_cast<char *>(SparceVec[i].data()), numCols * sizeof(float));
-        // }
     }
 
     return SparseRepresentation(SparceVec, sizeOriginalImage);
@@ -106,15 +97,6 @@ void StoringData::writeSparceRep(std::ofstream &outFile, const SparseRepresentat
         outFile.write(reinterpret_cast<const char *>(&colIdx), sizeof(colIdx)); // Column index
         outFile.write(reinterpret_cast<const char *>(&real), sizeof(real));     // Real part
         outFile.write(reinterpret_cast<const char *>(&imag), sizeof(imag));     // Image part
-
-        // // Save number of elements in this row
-        // size_t numCols = SparseRepresentation::CHANNELS_COMPLEX_VALUE_ROW_COLUMN;
-
-        // // Save actual data
-        // if (!row.empty())
-        // {
-        //     outFile.write(reinterpret_cast<const char *>(row.data()), numCols * sizeof(float));
-        // }
     }
 }
 
