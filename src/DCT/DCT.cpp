@@ -6,7 +6,34 @@ std::vector<float> DCT::computeDCT(const std::vector<float> &signal) const
     auto DCTMatrix = computeDCTMatrix(signal);
 
     std::vector<float> out = multiplyMatrixVector(DCTMatrix, signal);
+
     return out;
+}
+
+std::vector<float> DCT::computeInverseDCT(const std::vector<float> &coeff) const
+{
+    auto DCTMatrix = computeDCTMatrix(coeff);
+    auto inverseDCTMatrix = transpose(DCTMatrix);
+
+    std::vector<float> out = multiplyMatrixVector(inverseDCTMatrix, coeff);
+
+    return out;
+}
+
+std::vector<std::vector<float>> DCT::transpose(const std::vector<std::vector<float>> &DCTMatrix) const
+{
+    size_t N = DCTMatrix.size();
+    std::vector<std::vector<float>> transposed(N, std::vector<float>(N));
+
+    for (size_t i = 0; i < N; ++i)
+    {
+        for (size_t j = 0; j < N; ++j)
+        {
+            transposed[j][i] = DCTMatrix[i][j];
+        }
+    }
+
+    return transposed;
 }
 
 std::vector<float> DCT::multiplyMatrixVector(
@@ -37,7 +64,6 @@ std::vector<std::vector<float>> DCT::computeDCTMatrix(const std::vector<float> &
         for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++)
         {
             DCTMatrix[rowIndex][columnIndex] = static_cast<float>(computeDCTMatrixElement(rowIndex, columnIndex, matrixSize));
-            std::cout << computeDCTMatrixElement(rowIndex, columnIndex, matrixSize) << std::endl;
         }
     }
 
