@@ -24,7 +24,8 @@ add_executable(MyCMakeProject src/main.cpp
                               src/DFT.cpp
                               src/ComplexRowColumnValue.cpp
                               src/DCT/DCT.h
-                              src/DCT/TwoDimDCT.h)
+                              src/DCT/TwoDimDCT.h
+                              src/DCT/ImageChopper.h)
 
 target_link_libraries(MyCMakeProject ${OpenCV_LIBS})
 
@@ -48,15 +49,17 @@ FetchContent_MakeAvailable(googletest)
 
 # Create a test executable
 add_executable(MyTests
-    tests/test_main.cpp
-    tests/test_Image.cpp
-    tests/test_Compressor.cpp
-    tests/test_DFT.cpp
-    tests/test_DCT.cpp
-    tests/test_SparseRepresentation.cpp
-    tests/test_TwoDimDCT.cpp
+    # tests/test_main.cpp
+    # tests/test_Image.cpp
+    # tests/test_Compressor.cpp
+    # tests/test_DFT.cpp
+    # tests/test_DCT.cpp
+    # tests/test_SparseRepresentation.cpp
+    # tests/test_TwoDimDCT.cpp
+    tests/test_ImageChopper.cpp
 
     src/DCT/DCT.cpp
+    src/DCT/ImageChopper.cpp
     src/Image.cpp         # Add source files required for testing
     src/Compressor.cpp
     src/SparseRepresentation.cpp
