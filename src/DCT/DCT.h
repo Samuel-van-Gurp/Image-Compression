@@ -1,3 +1,6 @@
+#ifndef DCT_H
+#define DCT_H
+
 #include <vector>
 #include <cmath>
 #include <iostream>
@@ -20,3 +23,5 @@ private:
     std::vector<std::vector<float>> transpose(const std::vector<std::vector<float>> &DCTMatrix) const;
     std::vector<float> multiplyMatrixVector(const std::vector<std::vector<float>> &matrix, const std::vector<float> &signal) const;
 };
+
+#endif // DCT_H
