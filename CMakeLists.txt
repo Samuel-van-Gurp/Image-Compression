@@ -23,9 +23,11 @@ add_executable(MyCMakeProject src/main.cpp
                               src/StoringData.cpp
                               src/DFT.cpp
                               src/ComplexRowColumnValue.cpp
-                              src/DCT/DCT.h
-                              src/DCT/TwoDimDCT.h
-                              src/DCT/ImageChopper.h)
+                              src/DCT/DCT.cpp
+                              src/DCT/TwoDimDCT.cpp
+                              src/DCT/ImageChopper.cpp
+                              src/DCT/DCTCompression.cpp
+                              src/DCT/QuantizationTable.cpp)
 
 target_link_libraries(MyCMakeProject ${OpenCV_LIBS})
 
@@ -57,16 +59,18 @@ add_executable(MyTests
     tests/test_SparseRepresentation.cpp
     tests/test_TwoDimDCT.cpp
     tests/test_ImageChopper.cpp
+    
 
     src/DCT/DCT.cpp
     src/DCT/ImageChopper.cpp
-    src/Image.cpp         # Add source files required for testing
+    src/Image.cpp         
     src/Compressor.cpp
     src/SparseRepresentation.cpp
     src/StoringData.cpp
     src/DFT.cpp
     src/DCT/TwoDimDCT.cpp
     src/ComplexRowColumnValue.cpp
+    src/DCT/CompressionLevel.h
 )
 
 # Link GoogleTest and OpenCV to the test executable
