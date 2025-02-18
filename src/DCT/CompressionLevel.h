@@ -7,7 +7,8 @@ enum CompressionLevel
     LOW,
     MEDIUM,
     HIGH,
-    VERY_HIGH
+    VERY_HIGH,
+    ULTRA_HIGH
 };
 
 #endif // COMPRESSION_LEVEL_H

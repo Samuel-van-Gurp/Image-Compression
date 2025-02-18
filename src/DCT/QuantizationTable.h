@@ -10,6 +10,7 @@ struct QuantizationTable
     static const std::vector<std::vector<int>> mediumCompressionTable;
     static const std::vector<std::vector<int>> highCompressionTable;
     static const std::vector<std::vector<int>> veryHighCompressionTable;
+    static const std::vector<std::vector<int>> ultraHighCompressionTable;
 };
 
 #endif // JPEGQUANTIZATIONTABLE_H
