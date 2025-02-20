@@ -16,7 +16,9 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 # Make a library of the main code
-add_library(CompressionCalc STATIC src/Image.cpp
+add_library(CompressionCalc STATIC 
+                              src/Image.cpp
+                              src/RunLengthEnoding.cpp
 
                               src/DFT/DFTCompressor.cpp
                               src/DFT/SparseRepresentation.cpp
@@ -62,6 +64,7 @@ add_executable(MyTests
     tests/test_TwoDimDCT.cpp
     tests/test_ImageChopper.cpp
     tests/test_DCTCompression.cpp
+    tests/test_RunLengthEnoding.cpp
 )
 
 # Link GoogleTest and OpenCV to the test executable
