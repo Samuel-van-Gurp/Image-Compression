@@ -2,50 +2,58 @@
 #include "TwoDimDCT.h"
 #include <vector>
 
-std::vector<std::vector<std::vector<float>>> DCTCompression::DCTCompress(const std::vector<std::vector<float>> &image, const CompressionLevel compressionLevel) const
+std::vector<std::vector<std::vector<float>>> DCTCompression::DCTCompress(const std::vector<std::vector<float>> &image, const std::vector<std::vector<int>> &QuantizationTable, int CHUNCK_SIZE) const
 {
     ImageChopper imageChopper;
-    int CHUNCK_SIZE = 8;
 
     auto imageChuncks = imageChopper.chopImage(image, CHUNCK_SIZE);
 
     auto DCTImageChuncks = ApplyDCTToImagechuncks(imageChuncks);
 
-    auto quantizedImageChuncks = QuantizeImageChuncks(DCTImageChuncks, getQuantizationTable(compressionLevel));
-
-    return quantizedImageChuncks;
+    QuantizeImageChunks(DCTImageChuncks, QuantizationTable, divide);
+    return DCTImageChuncks;
 }
 
-std::vector<std::vector<float>> DCTCompression::DCTDecompress(const std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
-                                                              const CompressionLevel compressionLevel,
+std::vector<std::vector<float>> DCTCompression::DCTDecompress(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
+                                                              const std::vector<std::vector<int>> &QuantizationTable,
                                                               const int originalHeight,
                                                               const int originalWidth) const
 {
     ImageChopper imageChopper;
 
-    auto DeQuantisizedDCTImageChuncks = DeQuantisizeImageChuncks(DCTImageChuncks, getQuantizationTable(compressionLevel));
+    QuantizeImageChunks(DCTImageChuncks, QuantizationTable, multiply);
 
-    auto imageChuncks = ApplyInverseDCTToImageChuncks(DeQuantisizedDCTImageChuncks);
+    auto imageChuncks = ApplyInverseDCTToImageChuncks(DCTImageChuncks);
 
     return imageChopper.reconstructImage(imageChuncks, originalHeight, originalWidth);
 }
 
-std::vector<std::vector<std::vector<float>>> DCTCompression::DeQuantisizeImageChuncks(std::vector<std::vector<std::vector<float>>> imageChuncks,
-                                                                                      const std::vector<std::vector<int>> &quantizationTable) const
+void DCTCompression::QuantizeImageChunks(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
+                                         const std::vector<std::vector<int>> &quantizationTable,
+                                         std::function<float(float, int)> devideOrMultiply) const
 {
-    for (auto &chunck : imageChuncks)
+
+    for (auto &chunck : DCTImageChuncks)
     {
         for (size_t i = 0; i < chunck.size(); ++i)
         {
             for (size_t j = 0; j < chunck[i].size(); ++j)
             {
-                chunck[i][j] = chunck[i][j] * quantizationTable[i][j];
+                chunck[i][j] = std::round(devideOrMultiply(chunck[i][j], quantizationTable[i][j]));
             }
         }
     }
-
-    return imageChuncks;
 }
+
+std::function<float(float, int)> DCTCompression::divide = [](float a, int b) -> float
+{
+    return (b != 0) ? (a / b) : 0.0f; // Avoid division by zero
+};
+
+std::function<float(float, int)> DCTCompression::multiply = [](float a, int b) -> float
+{
+    return a * b;
+};
 
 std::vector<std::vector<std::vector<float>>> DCTCompression::ApplyInverseDCTToImageChuncks(const std::vector<std::vector<std::vector<float>>> &DCTImageChuncks) const
 {
@@ -60,25 +68,6 @@ std::vector<std::vector<std::vector<float>>> DCTCompression::ApplyInverseDCTToIm
     return imageChuncks;
 }
 
-std::vector<std::vector<int>> DCTCompression::getQuantizationTable(CompressionLevel compressionLevel) const
-{
-    switch (compressionLevel)
-    {
-    case CompressionLevel::LOW:
-        return QuantizationTable::lowCompressionTable;
-    case CompressionLevel::MEDIUM:
-        return QuantizationTable::mediumCompressionTable;
-    case CompressionLevel::HIGH:
-        return QuantizationTable::highCompressionTable;
-    case CompressionLevel::VERY_HIGH:
-        return QuantizationTable::veryHighCompressionTable;
-    case CompressionLevel::ULTRA_HIGH:
-        return QuantizationTable::ultraHighCompressionTable;
-    default:
-        return QuantizationTable::lowCompressionTable;
-    }
-}
-
 std::vector<std::vector<std::vector<float>>> DCTCompression::ApplyDCTToImagechuncks(const std::vector<std::vector<std::vector<float>>> &imageChuncks) const
 {
     TwoDimDCT twoDimDct;
@@ -87,26 +76,6 @@ std::vector<std::vector<std::vector<float>>> DCTCompression::ApplyDCTToImagechun
     for (auto const &chunck : imageChuncks)
     {
         DCTImageChuncks.push_back(twoDimDct.computeTwoDimDCT(chunck));
-    }
-
-    return DCTImageChuncks;
-}
-
-std::vector<std::vector<std::vector<float>>> DCTCompression::QuantizeImageChuncks(std::vector<std::vector<std::vector<float>>> DCTImageChuncks,
-                                                                                  const std::vector<std::vector<int>> &quantizationTable) const
-{
-
-    for (auto &chunck : DCTImageChuncks)
-    {
-        for (size_t i = 0; i < chunck.size(); ++i)
-        {
-            for (size_t j = 0; j < chunck[i].size(); ++j)
-            {
-                chunck[i][j] = std::round(chunck[i][j] / quantizationTable[i][j]);
-                // std::cout << "chunck[i][j]:" << chunck[i][j] << std::endl;
-                // round to nearest integer
-            }
-        }
     }
 
     return DCTImageChuncks;
