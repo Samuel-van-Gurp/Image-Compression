@@ -3,11 +3,11 @@
 #include "SparseRepresentation.h"
 #include <opencv2/opencv.hpp>
 
-class Compressor
+class DFTCompressor
 {
 
 public:
-    Compressor();
+    DFTCompressor();
 
     SparseRepresentation compress(const Image &image, float percentile) const;
     Image decompress(const SparseRepresentation &sparseRepr) const;

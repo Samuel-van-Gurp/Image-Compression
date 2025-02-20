@@ -1,4 +1,4 @@
-#include "DFT/Compressor.h"
+#include "DFT/DFTCompressor.h"
 #include "Image.h"
 #include <gtest/gtest.h>
 
@@ -11,7 +11,7 @@ TEST(CompressorTest, CompressionRountTripNOCompression)
     cv::randu(RandomMatrix, 0.0, 255.0);
 
     Image randomImage = Image(RandomMatrix);
-    Compressor compressor;
+    DFTCompressor compressor;
 
     auto SparceRep = compressor.compress(randomImage, COMPRESSION_PERCENTILE);
     Image decompressedImage = compressor.decompress(SparceRep);

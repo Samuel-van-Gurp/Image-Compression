@@ -19,7 +19,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 add_executable(MyCMakeProject src/main.cpp
                               src/Image.cpp
 
-                              src/DFT/Compressor.cpp
+                              src/DFT/DFTCompressor.cpp
                               src/DFT/SparseRepresentation.cpp
                               src/DFT/StoringData.cpp
                               src/DFT/DFT.cpp
@@ -67,7 +67,7 @@ add_executable(MyTests
     
     src/Image.cpp
              
-    src/DFT/Compressor.cpp
+    src/DFT/DFTCompressor.cpp
     src/DFT/SparseRepresentation.cpp
     src/DFT/StoringData.cpp
     src/DFT/DFT.cpp

@@ -1,6 +1,6 @@
 #include "Image.h"
 
-#include "DFT/Compressor.h"
+#include "DFT/DFTCompressor.h"
 #include "DFT/SparseRepresentation.h"
 #include "DFT/StoringData.h"
 
@@ -16,7 +16,7 @@ int main()
 
     // Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
 
-    // Compressor compressor = Compressor();
+    // DFTCompressor compressor = DFTCompressor();
 
     // // img.displayImage();
 

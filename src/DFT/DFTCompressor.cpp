@@ -1,10 +1,10 @@
-#include "Compressor.h"
+#include "DFTCompressor.h"
 
-Compressor::Compressor()
+DFTCompressor::DFTCompressor()
 {
 }
 
-float const Compressor::ComputeIntensityThreshold(const cv::Mat &magnitude, float percentile) const
+float const DFTCompressor::ComputeIntensityThreshold(const cv::Mat &magnitude, float percentile) const
 {
 
     const float PERCENTILE_SCALE = 100.0f;
@@ -15,7 +15,7 @@ float const Compressor::ComputeIntensityThreshold(const cv::Mat &magnitude, floa
 
     int index = static_cast<int>(sorted.cols * (percentile / PERCENTILE_SCALE));
 
-    index = std::min(index, sorted.cols - 1); // clap to range
+    index = std::min(index, sorted.cols - 1); // clamp to range
 
     float threshold = sorted.at<float>(index);
 
@@ -30,7 +30,7 @@ void validatePercentileRange(float percentile)
     }
 }
 
-cv::Mat Compressor::MakeSubSamplingMask(const cv::Mat &magnitude, float threshold) const
+cv::Mat DFTCompressor::MakeSubSamplingMask(const cv::Mat &magnitude, float threshold) const
 {
     cv::Mat mask = cv::Mat::zeros(magnitude.size(), CV_32F);
 
@@ -47,7 +47,7 @@ cv::Mat Compressor::MakeSubSamplingMask(const cv::Mat &magnitude, float threshol
     return mask;
 }
 
-cv::Mat Compressor::applyMask(const cv::Mat &complexImage, const cv::Mat &mask) const
+cv::Mat DFTCompressor::applyMask(const cv::Mat &complexImage, const cv::Mat &mask) const
 {
     cv::Mat planes[2];
     cv::split(complexImage, planes);
@@ -63,7 +63,7 @@ cv::Mat Compressor::applyMask(const cv::Mat &complexImage, const cv::Mat &mask) 
     return maskedComplexImage;
 }
 
-SparseRepresentation Compressor::compress(const Image &image, float percentile) const
+SparseRepresentation DFTCompressor::compress(const Image &image, float percentile) const
 {
     validatePercentileRange(percentile);
 
@@ -80,7 +80,7 @@ SparseRepresentation Compressor::compress(const Image &image, float percentile) 
     return sparseRepr;
 }
 
-Image Compressor::decompress(const SparseRepresentation &sparseRepr) const
+Image DFTCompressor::decompress(const SparseRepresentation &sparseRepr) const
 {
     DFT dft;
 
