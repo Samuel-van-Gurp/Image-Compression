@@ -15,24 +15,24 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 # Specify the output directory for the executable
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
-# Add the executable target using the source file(s)
-add_executable(MyCMakeProject src/main.cpp
-                              src/Image.cpp
+# Make a library of the main code
+add_library(CompressionCalc STATIC src/Image.cpp
 
                               src/DFT/DFTCompressor.cpp
                               src/DFT/SparseRepresentation.cpp
                               src/DFT/StoringData.cpp
                               src/DFT/DFT.cpp
                               src/DFT/ComplexRowColumnValue.cpp
-                              
+
                               src/DCT/DCT.cpp
                               src/DCT/TwoDimDCT.cpp
                               src/DCT/ImageChopper.cpp
                               src/DCT/DCTCompression.cpp
                               src/DCT/QuantizationTable.cpp)
 
-target_link_libraries(MyCMakeProject ${OpenCV_LIBS})
-
+# make main executable and link it with the CompressionCalc and OpenCV
+add_executable(MyCMakeProject src/main.cpp)
+target_link_libraries(MyCMakeProject CompressionCalc ${OpenCV_LIBS})
 
 # -------------------------------------------
 # Google Test 
@@ -62,26 +62,10 @@ add_executable(MyTests
     tests/test_TwoDimDCT.cpp
     tests/test_ImageChopper.cpp
     tests/test_DCTCompression.cpp
-    
-
-    
-    src/Image.cpp
-             
-    src/DFT/DFTCompressor.cpp
-    src/DFT/SparseRepresentation.cpp
-    src/DFT/StoringData.cpp
-    src/DFT/DFT.cpp
-    src/DFT/ComplexRowColumnValue.cpp
-    
-    src/DCT/ImageChopper.cpp
-    src/DCT/DCT.cpp
-    src/DCT/TwoDimDCT.cpp
-    src/DCT/DCTCompression.cpp
-    src/DCT/QuantizationTable.cpp
 )
 
 # Link GoogleTest and OpenCV to the test executable
-target_link_libraries(MyTests PRIVATE gtest_main ${OpenCV_LIBS})
+target_link_libraries(MyTests PRIVATE gtest_main ${OpenCV_LIBS} CompressionCalc)
 
 # Discover and register tests with CTest
 include(GoogleTest)
