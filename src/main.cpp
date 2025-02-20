@@ -1,10 +1,13 @@
 #include "Image.h"
-#include "Compressor.h"
-#include "SparseRepresentation.h"
-#include "StoringData.h"
+
+#include "DFT/Compressor.h"
+#include "DFT/SparseRepresentation.h"
+#include "DFT/StoringData.h"
+
 #include "DCT/DCT.h"
 #include "DCT/ImageChopper.h"
 #include "DCT/DCTCompression.h"
+
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
@@ -42,9 +45,9 @@ int main()
 
     auto img_vec = img.getImageAsVector();
 
-    auto compressedImage = dctCompression.DCTCompress(img_vec, CompressionLevel::ULTRA_HIGH);
+    auto compressedImage = dctCompression.DCTCompress(img_vec, QuantizationTable::mediumCompressionTable);
 
-    auto decompressedImage = dctCompression.DCTDecompress(compressedImage, CompressionLevel::ULTRA_HIGH, static_cast<int>(img_vec.size()), static_cast<int>(img_vec[0].size()));
+    auto decompressedImage = dctCompression.DCTDecompress(compressedImage, QuantizationTable::mediumCompressionTable, static_cast<int>(img_vec.size()), static_cast<int>(img_vec[0].size()));
 
     Image decompressedImg = Image(decompressedImage);
 

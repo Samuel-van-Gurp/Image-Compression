@@ -1,5 +1,5 @@
 #include "Image.h"
-#include "DFT.h"
+#include "DFT/DFT.h"
 #include "SparseRepresentation.h"
 #include <opencv2/opencv.hpp>
 

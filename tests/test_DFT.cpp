@@ -1,4 +1,4 @@
-#include "DFT.h"
+#include "DFT/DFT.h"
 #include <gtest/gtest.h>
 #include <vector>
 #include <cmath>

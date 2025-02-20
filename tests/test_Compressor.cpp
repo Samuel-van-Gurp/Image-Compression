@@ -1,4 +1,4 @@
-#include "Compressor.h"
+#include "DFT/Compressor.h"
 #include "Image.h"
 #include <gtest/gtest.h>
 

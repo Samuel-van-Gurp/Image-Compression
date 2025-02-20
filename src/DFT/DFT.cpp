@@ -1,4 +1,4 @@
-#include "DFT.h"
+#include "DFT/DFT.h"
 
 cv::Mat DFT::computeDFT(const cv::Mat &img) const
 {

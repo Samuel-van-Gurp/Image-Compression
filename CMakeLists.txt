@@ -18,11 +18,13 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 # Add the executable target using the source file(s)
 add_executable(MyCMakeProject src/main.cpp
                               src/Image.cpp
-                              src/Compressor.cpp
-                              src/SparseRepresentation.cpp
-                              src/StoringData.cpp
-                              src/DFT.cpp
-                              src/ComplexRowColumnValue.cpp
+
+                              src/DFT/Compressor.cpp
+                              src/DFT/SparseRepresentation.cpp
+                              src/DFT/StoringData.cpp
+                              src/DFT/DFT.cpp
+                              src/DFT/ComplexRowColumnValue.cpp
+                              
                               src/DCT/DCT.cpp
                               src/DCT/TwoDimDCT.cpp
                               src/DCT/ImageChopper.cpp
@@ -59,18 +61,23 @@ add_executable(MyTests
     tests/test_SparseRepresentation.cpp
     tests/test_TwoDimDCT.cpp
     tests/test_ImageChopper.cpp
+    tests/test_DCTCompression.cpp
     
 
-    src/DCT/DCT.cpp
+    
+    src/Image.cpp
+             
+    src/DFT/Compressor.cpp
+    src/DFT/SparseRepresentation.cpp
+    src/DFT/StoringData.cpp
+    src/DFT/DFT.cpp
+    src/DFT/ComplexRowColumnValue.cpp
+    
     src/DCT/ImageChopper.cpp
-    src/Image.cpp         
-    src/Compressor.cpp
-    src/SparseRepresentation.cpp
-    src/StoringData.cpp
-    src/DFT.cpp
+    src/DCT/DCT.cpp
     src/DCT/TwoDimDCT.cpp
-    src/ComplexRowColumnValue.cpp
-    src/DCT/CompressionLevel.h
+    src/DCT/DCTCompression.cpp
+    src/DCT/QuantizationTable.cpp
 )
 
 # Link GoogleTest and OpenCV to the test executable
