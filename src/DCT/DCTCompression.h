@@ -16,11 +16,13 @@ public:
                                                   const int originalWidth) const;
 
 private:
-    void QuantizeImageChunks(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks, const std::vector<std::vector<int>> &quantizationTable, std::function<float(float, int)> devideOrMultiply) const;
+    std::vector<std::vector<std::vector<float>>> ApplyDCTToImagechuncks(const std::vector<std::vector<std::vector<float>>> &imageChuncks) const;
+    std::vector<std::vector<std::vector<float>>> ApplyInverseDCTToImageChuncks(const std::vector<std::vector<std::vector<float>>> &DCTImageChuncks) const;
+
+    void QuantizeImageChunks(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
+                             const std::vector<std::vector<int>> &quantizationTable,
+                             std::function<float(float, int)> devideOrMultiply) const;
+
     static std::function<float(float, int)> divide;
     static std::function<float(float, int)> multiply;
-    std::vector<std::vector<std::vector<float>>> ApplyDCTToImagechuncks(const std::vector<std::vector<std::vector<float>>> &imageChuncks) const;
-    void QuantizeImageChuncks(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks, const std::vector<std::vector<int>> &quantizationTable) const;
-    void DeQuantisizeImageChuncks(std::vector<std::vector<std::vector<float>>> &imageChuncks, const std::vector<std::vector<int>> &quantizationTable) const;
-    std::vector<std::vector<std::vector<float>>> ApplyInverseDCTToImageChuncks(const std::vector<std::vector<std::vector<float>>> &DCTImageChuncks) const;
 };
