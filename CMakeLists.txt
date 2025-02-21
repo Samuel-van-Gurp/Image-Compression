@@ -31,7 +31,7 @@ add_library(CompressionCalc STATIC
                               src/DCT/ImageChopper.cpp
                               src/DCT/DCTCompression.cpp
                               src/DCT/QuantizationTable.cpp
-                              src/DCT/DCTencoder.cpp)
+                              src/DCT/ZigzagDCTcoefficientsOrder.cpp)
 
 # make main executable and link it with the CompressionCalc and OpenCV
 add_executable(MyCMakeProject src/main.cpp)
