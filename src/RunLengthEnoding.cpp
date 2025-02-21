@@ -28,6 +28,26 @@ std::vector<std::pair<int, int>> RunLengthEnoding::RunLengthEncode(const std::ve
     return encodedVector;
 }
 
+std::vector<std::vector<std::pair<int,int>>> RunLengthEnoding::RunLengthEncodeImageBlocks(const std::vector<std::vector<int>>& vector) const
+{
+    std::vector<std::vector<std::pair<int,int>>> encodedVector;
+    for (const std::vector<int>& imageBlock : vector)
+    {
+        encodedVector.push_back(RunLengthEncode(imageBlock));
+    }
+    return encodedVector;
+}
+
+std::vector<std::vector<int>> RunLengthEnoding::RunLengthDecodeImageBlocks(const std::vector<std::vector<std::pair<int,int>>>& encodedVector) const
+{
+    std::vector<std::vector<int>> decodedVector;
+    for (const std::vector<std::pair<int,int>>& imageBlock : encodedVector)
+    {
+        decodedVector.push_back(RunLengthDecode(imageBlock));
+    }
+    return decodedVector;
+}
+
 std::vector<int> RunLengthEnoding::RunLengthDecode(const std::vector<std::pair<int, int>> &encodedVector) const
 {
     std::vector<int> decodedVector;
