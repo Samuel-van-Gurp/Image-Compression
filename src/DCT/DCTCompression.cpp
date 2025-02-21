@@ -2,7 +2,7 @@
 #include "TwoDimDCT.h"
 #include <vector>
 
-std::vector<std::vector<std::vector<float>>> DCTCompression::DCTCompress(const std::vector<std::vector<float>> &image, const std::vector<std::vector<int>> &QuantizationTable, int CHUNCK_SIZE) const
+std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::DCTTransformImage(const std::vector<std::vector<float>> &image, const std::vector<std::vector<int>> &QuantizationTable, int CHUNCK_SIZE) const
 {
     ImageChopper imageChopper;
 
@@ -14,10 +14,10 @@ std::vector<std::vector<std::vector<float>>> DCTCompression::DCTCompress(const s
     return DCTImageChuncks;
 }
 
-std::vector<std::vector<float>> DCTCompression::DCTDecompress(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
-                                                              const std::vector<std::vector<int>> &QuantizationTable,
-                                                              const int originalHeight,
-                                                              const int originalWidth) const
+std::vector<std::vector<float>> DCTTransformationHandler::inverseDCTTransformImage(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
+                                                                                   const std::vector<std::vector<int>> &QuantizationTable,
+                                                                                   const int originalHeight,
+                                                                                   const int originalWidth) const
 {
     ImageChopper imageChopper;
 
@@ -28,9 +28,9 @@ std::vector<std::vector<float>> DCTCompression::DCTDecompress(std::vector<std::v
     return imageChopper.reconstructImage(imageChuncks, originalHeight, originalWidth);
 }
 
-void DCTCompression::QuantizeImageChunks(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
-                                         const std::vector<std::vector<int>> &quantizationTable,
-                                         std::function<float(float, int)> devideOrMultiply) const
+void DCTTransformationHandler::QuantizeImageChunks(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
+                                                   const std::vector<std::vector<int>> &quantizationTable,
+                                                   std::function<float(float, int)> devideOrMultiply) const
 {
 
     for (auto &chunck : DCTImageChuncks)
@@ -39,23 +39,23 @@ void DCTCompression::QuantizeImageChunks(std::vector<std::vector<std::vector<flo
         {
             for (size_t j = 0; j < chunck[i].size(); ++j)
             {
-                chunck[i][j] = std::round(devideOrMultiply(chunck[i][j], quantizationTable[i][j]));
+                chunck[i][j] = (std::round(devideOrMultiply(chunck[i][j], quantizationTable[i][j])));
             }
         }
     }
 }
 
-std::function<float(float, int)> DCTCompression::divide = [](float a, int b) -> float
+std::function<float(float, int)> DCTTransformationHandler::divide = [](float a, int b) -> float
 {
     return (b != 0) ? (a / b) : 0.0f; // Avoid division by zero
 };
 
-std::function<float(float, int)> DCTCompression::multiply = [](float a, int b) -> float
+std::function<float(float, int)> DCTTransformationHandler::multiply = [](float a, int b) -> float
 {
     return a * b;
 };
 
-std::vector<std::vector<std::vector<float>>> DCTCompression::ApplyInverseDCTToImageChuncks(const std::vector<std::vector<std::vector<float>>> &DCTImageChuncks) const
+std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::ApplyInverseDCTToImageChuncks(const std::vector<std::vector<std::vector<float>>> &DCTImageChuncks) const
 {
     TwoDimDCT twoDimDCT;
     std::vector<std::vector<std::vector<float>>> imageChuncks;
@@ -68,7 +68,7 @@ std::vector<std::vector<std::vector<float>>> DCTCompression::ApplyInverseDCTToIm
     return imageChuncks;
 }
 
-std::vector<std::vector<std::vector<float>>> DCTCompression::ApplyDCTToImagechuncks(const std::vector<std::vector<std::vector<float>>> &imageChuncks) const
+std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::ApplyDCTToImagechuncks(const std::vector<std::vector<std::vector<float>>> &imageChuncks) const
 {
     TwoDimDCT twoDimDct;
     std::vector<std::vector<std::vector<float>>> DCTImageChuncks;
