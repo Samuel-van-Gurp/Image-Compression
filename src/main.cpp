@@ -7,6 +7,9 @@
 #include "DCT/DCT.h"
 #include "DCT/ImageChopper.h"
 #include "DCT/DCTCompression.h"
+#include "DCT/DCTEncoding.h"
+#include "DCT/ZigzagDCTcoefficientsOrder.h"
+#include "RunLengthEnoding.h"
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -39,21 +42,28 @@ int main()
     //  DCT compression   //
     ////////////////////////
 
-    Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
-    img.displayImage();
-    DCTCompression dctCompression;
+    // DCTTransformationHandler dctTransformationHandler;
+    
+    // DCTEncoding dctEncoding = DCTEncoding(RunLengthEnoding(), ZigzagDCTcoefficientsOrder());
 
-    auto img_vec = img.getImageAsVector();
+    // Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
+    // img.displayImage();
 
-    auto compressedImage = dctCompression.DCTCompress(img_vec, QuantizationTable::mediumCompressionTable);
+    // auto img_vec = img.getImageAsVector();
 
-    auto decompressedImage = dctCompression.DCTDecompress(compressedImage, QuantizationTable::mediumCompressionTable, static_cast<int>(img_vec.size()), static_cast<int>(img_vec[0].size()));
+    // auto TransformedImage = dctTransformationHandler.DCTTransformImage(img_vec, QuantizationTable::ultraHighCompressionTable);
 
-    Image decompressedImg = Image(decompressedImage);
+    // auto encodedImage = dctEncoding.encodeImageBlocks(TransformedImage);
 
-    decompressedImg.displayImage("Decompressed Image");
+    // auto decodedImage = dctEncoding.decodeImageBlocks(encodedImage);
 
-    decompressedImg.DisplayDiffImage(img);
+    // auto inverseTransformedImage = dctTransformationHandler.inverseDCTTransformImage(decodedImage, QuantizationTable::ultraHighCompressionTable, static_cast<int>(img_vec.size()), static_cast<int>(img_vec[0].size()));
+
+    // Image decompressedImg = Image(inverseTransformedImage);
+
+    // decompressedImg.displayImage("Decompressed Image");
+
+    // decompressedImg.DisplayDiffImage(img);
 
     return 0;
 }
