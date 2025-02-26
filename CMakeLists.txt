@@ -30,6 +30,7 @@ add_library(CompressionCalc STATIC
                               src/DCT/TwoDimDCT.cpp
                               src/DCT/ImageChopper.cpp
                               src/DCT/DCTCompression.cpp
+                              src/DCT/DCTTransformationHandler.cpp
                               src/DCT/QuantizationTable.cpp
                               src/DCT/ZigzagDCTcoefficientsOrder.cpp)
 
@@ -64,7 +65,7 @@ add_executable(MyTests
     tests/test_SparseRepresentation.cpp
     tests/test_TwoDimDCT.cpp
     tests/test_ImageChopper.cpp
-    tests/test_DCTCompression.cpp
+    tests/test_DCTTransformationHandler.cpp
     tests/test_RunLengthEnoding.cpp
 )
 
