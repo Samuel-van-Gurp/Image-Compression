@@ -78,5 +78,7 @@
         "unordered_set": "cpp",
         "variant": "cpp",
         "random": "cpp"
-    }
+    },
+    "C_Cpp.default.compilerPath": "cl.exe",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }

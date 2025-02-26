@@ -24,42 +24,90 @@ Image-Compression is a tool designed to compress images into a custom ".samuel" 
 
 The tool transforms images into a new domain where only a few important values are retained, discarding the rest. This process is similar to the JPEG compression technique. The retained values are then used to reconstruct the image, achieving a state close to the original.
 
-## Usage
 
-### Building the Project
 
-To build the project, use CMake:
+## Code Documentation 
 
-```sh
-mkdir build
-cd build
-cmake ..
-make
-```
+here is an figure of the class diagram (WIP)
 
-### Running the Tool
+![Class Diagram](class_diagram.png)
 
-To compress an image:
+## **Discrete Cosine Transform (DCT) Implementation**
 
-```sh
-./image-compression <input_image> <output_file> <compression_level>
-```
+### **Overview**
+This section explains the **Discrete Cosine Transform (DCT)** and its implementation in `DCT.cpp`.  
+DCT is widely used in image and signal compression (e.g., **JPEG compression**) to convert signals from the **spatial domain** to the **frequency domain**, allowing more efficient data representation.
 
-### Compression Levels
+---
 
-- `low`: Low compression, high quality.
-- `medium`: Medium compression, balanced quality and file size.
-- `high`: High compression, reduced quality.
-- `very_high`: Very high compression, significantly reduced quality.
-- `ultra_high`: Ultra high compression, minimal quality.
+### **1. Mathematical Foundation**
 
-## Testing
+#### **DCT-II Transformation**
 
-Run the unit tests using:
+The **DCT-II**, which is commonly used in compression algorithms, transforms an input signal $ x[n] $ of length $ N $ into frequency coefficients $ X[k] $:
 
-```sh
-./run_tests
-```
+$$
+X[k] = \sum_{n=0}^{N-1} x[n] \cdot C(k, n)
+$$
+
+Where:
+
+$$
+C(k, n) = \alpha(k) \cos \left( \frac{\pi (2n + 1) k}{2N} \right)
+$$
+
+The normalization factor $ \alpha(k) $ is:
+
+$$
+\alpha(k) =
+\begin{cases}
+\sqrt{\frac{1}{N}}, & k = 0 \\
+\sqrt{\frac{2}{N}}, & k \geq 1
+\end{cases}
+$$
+
+This equation tells us how to compute the frequency coefficients $ X[k] $ by taking a weighted sum of the input signal $ x[n] $, with each weight being a cosine function at the $ k^{th} $ frequency.
+
+#### **Inverse DCT (IDCT)**
+
+The **Inverse DCT (IDCT)** reconstructs the original signal from the frequency coefficients:
+
+$$
+x[n] = \sum_{k=0}^{N-1} X[k] \cdot C(k, n)
+$$
+
+---
+
+### **2. Matrix Representation in Code**
+
+In the code, the DCT operation is implemented using **matrix-vector multiplication**. This means that the DCT is represented as a matrix, where each element of the matrix corresponds to a **cosine basis function**. 
+
+The **DCT matrix** is computed as follows:
+
+$$
+\text{DCTMatrix}[i][j] = \alpha(i) \cdot \cos \left( \frac{\pi (2j + 1) i}{2N} \right)
+$$
+
+Where:
+- $ \text{DCTMatrix}[i][j] $ corresponds to the **element at the $i^{th}$ row and $j^{th}$ column** in the matrix.
+- $ \alpha(i) $ is the normalization factor for the $i^{th}$ row.
+- $ \cos \left( \frac{\pi (2j + 1) i}{2N} \right) $ is the cosine function determining the transformation for each coefficient.
+
+This matrix transforms the input signal from the **spatial domain** to the **frequency domain**.
+
+In the implementation, the input signal is treated as a vector $ x $ of length $ N $, and the **DCT matrix** is multiplied by this vector to obtain the transformed frequency coefficients:
+
+$$
+X = \text{DCTMatrix} \times x
+$$
+
+Similarly, the **inverse DCT** is performed by multiplying the **inverse of the DCT matrix** (which is the transpose of the original matrix) with the frequency coefficients to recover the signal:
+
+$$
+x = (\text{DCTMatrix})^{T} \times X
+$$
+
+
 
 ## Dependencies
 
@@ -67,13 +115,7 @@ Run the unit tests using:
 - OpenCV
 - GoogleTest
 
-## Contributing
 
-Contributions are welcome! Please fork the repository and submit pull requests.
-
-## License
-
-This project is licensed under the MIT License.
 
 ## References
 

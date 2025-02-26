@@ -1,5 +1,6 @@
 #include "Image.h"
 
+
 #include "DFT/DFTCompressor.h"
 #include "DFT/SparseRepresentation.h"
 #include "DFT/StoringData.h"
@@ -9,6 +10,8 @@
 #include "DCT/DCTCompression.h"
 #include "DCT/DCTEncoding.h"
 #include "DCT/ZigzagDCTcoefficientsOrder.h"
+#include "DCT/DCTTransformationHandler.h"
+
 #include "RunLengthEnoding.h"
 
 #include <opencv2/opencv.hpp>
