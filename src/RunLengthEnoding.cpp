@@ -9,7 +9,7 @@ std::vector<std::pair<int, int>> RunLengthEnoding::RunLengthEncode(const std::ve
     std::vector<std::pair<int, int>> encodedVector;
 
     int count = 1;
-    for (size_t i = 1; i < vector.size(); ++i)
+    for (std::size_t i = 1; i < vector.size(); ++i)
     {
         if (vector[i] == vector[i - 1])
         {
