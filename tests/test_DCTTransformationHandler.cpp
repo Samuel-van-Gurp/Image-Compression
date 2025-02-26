@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "DCT/DCTCompression.h"
+#include "DCT/DCTTransformationHandler.h"
 #include <opencv2/opencv.hpp>
 #include <random>
 
