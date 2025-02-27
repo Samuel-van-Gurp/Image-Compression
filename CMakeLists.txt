@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.11)
 project(MyCMakeProject VERSION 1.0 LANGUAGES CXX)
 
 # Set C++ standard
-set(CMAKE_CXX_STANDARD 11)
+# set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(WIN32) # check that we are on windows
@@ -18,7 +19,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 # Make a library of the main code
 add_library(CompressionCalc STATIC 
                               src/Image.cpp
-                              src/RunLengthEnoding.cpp
+                              src/RunLengthEnoding.h
 
                               src/DFT/DFTCompressor.cpp
                               src/DFT/SparseRepresentation.cpp
