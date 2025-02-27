@@ -1,3 +1,6 @@
+#ifndef DCT_ENCODING_H
+#define DCT_ENCODING_H
+
 #include "zigzagDCTcoefficientsOrder.h"
 #include "runLengthEnoding.h"
 #include <vector>
@@ -26,3 +29,5 @@ private:
     RunLengthEnoding m_runlengthEnoding;
     ZigzagDCTcoefficientsOrder m_zigzagDCTcoefficientsOrder;
 };
+
+#endif // DCT_ENCODING_H
