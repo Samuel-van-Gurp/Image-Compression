@@ -1,6 +1,5 @@
 #include "Image.h"
 
-
 #include "DFT/DFTCompressor.h"
 #include "DFT/SparseRepresentation.h"
 #include "DFT/StoringData.h"
@@ -11,6 +10,8 @@
 #include "DCT/DCTEncoding.h"
 #include "DCT/ZigzagDCTcoefficientsOrder.h"
 #include "DCT/DCTTransformationHandler.h"
+#include "DCT/DCTCompression.h"
+#include "DCT/StoreDCTData.h"
 
 #include "RunLengthEnoding.h"
 
@@ -45,28 +46,30 @@ int main()
     //  DCT compression   //
     ////////////////////////
 
-    // DCTTransformationHandler dctTransformationHandler;
+    DCTCompression dctCompression;
+
+    StoreDCTData storeDCTData = StoreDCTData();
+
+    Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
+    img.displayImage();
+
+    auto img_vec = img.getImageAsVector();
+
+    CompressedImageHolder compressedImage = dctCompression.DCTCompress(img_vec, QuantizationTable::ultraHighCompressionTable);
+
+    storeDCTData.writeToBinary("camera.samuelDCT", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/", compressedImage);
+
+    auto compressedImageHolderReadFormFile = storeDCTData.readFromBinary("camera.samuelDCT", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
+
+
+    auto reconstructedImage = dctCompression.DCTDecompress(compressedImageHolderReadFormFile);
+
+    Image decompressedImg = Image(reconstructedImage);
+
+    decompressedImg.scaleIntensity();
     
-    // DCTEncoding dctEncoding = DCTEncoding(RunLengthEnoding(), ZigzagDCTcoefficientsOrder());
+    decompressedImg.displayImage("Reconstructed Image");
 
-    // Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
-    // img.displayImage();
-
-    // auto img_vec = img.getImageAsVector();
-
-    // auto TransformedImage = dctTransformationHandler.DCTTransformImage(img_vec, QuantizationTable::ultraHighCompressionTable);
-
-    // auto encodedImage = dctEncoding.encodeImageBlocks(TransformedImage);
-
-    // auto decodedImage = dctEncoding.decodeImageBlocks(encodedImage);
-
-    // auto inverseTransformedImage = dctTransformationHandler.inverseDCTTransformImage(decodedImage, QuantizationTable::ultraHighCompressionTable, static_cast<int>(img_vec.size()), static_cast<int>(img_vec[0].size()));
-
-    // Image decompressedImg = Image(inverseTransformedImage);
-
-    // decompressedImg.displayImage("Decompressed Image");
-
-    // decompressedImg.DisplayDiffImage(img);
 
     return 0;
 }
