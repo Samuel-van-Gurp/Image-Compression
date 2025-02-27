@@ -1,3 +1,6 @@
+#ifndef DCT_TRANSFORMATION_HANDLER_H
+#define DCT_TRANSFORMATION_HANDLER_H
+
 #include "QuantizationTable.h"
 #include "ImageChopper.h"
 #include "DCT.h"
@@ -26,3 +29,5 @@ private:
     static std::function<float(float, int)> divide;
     static std::function<float(float, int)> multiply;
 };
+
+#endif // DCT_TRANSFORMATION_HANDLER_H

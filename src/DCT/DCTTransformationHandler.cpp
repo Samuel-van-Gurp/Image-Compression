@@ -22,11 +22,12 @@ std::vector<std::vector<float>> DCTTransformationHandler::inverseDCTTransformIma
 {
     ImageChopper imageChopper;
 
-    QuantizeImageChunks(DCTImageChunks, QuantizationTable, multiply);
+    auto dequantisedChunks = QuantizeImageChunks(DCTImageChunks, QuantizationTable, multiply);
 
-    auto imageChunks = ApplyInverseDCTToImageChunks(DCTImageChunks);
+    auto imageChunks = ApplyInverseDCTToImageChunks(dequantisedChunks);
 
-    return imageChopper.reconstructImage(imageChunks, originalHeight, originalWidth);
+    auto result = imageChopper.reconstructImage(imageChunks, originalHeight, originalWidth);
+    return result;
 }
 
 std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::QuantizeImageChunks(std::vector<std::vector<std::vector<float>>> &DCTImageChunks,
