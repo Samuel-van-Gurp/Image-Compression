@@ -55,6 +55,11 @@ void Image::displayImage(const std::string &title) const
     cv::destroyAllWindows();
 }
 
+void Image::scaleIntensity(int min, int max)
+{
+    cv::normalize(m_image, m_image, min, max, cv::NORM_MINMAX);
+}
+
 cv::Mat Image::getImageMatrix() const
 {
     return m_image;
@@ -90,7 +95,7 @@ void Image::ImageReport() const
 {
     std::cout << "________________________________________________ " << std::endl;
 
-    std::cout << "Image size: " << m_image.rows << "x" << m_image.cols << std::endl;
+    std::cout << "Image size: x" << m_image.rows << "y" << m_image.cols << std::endl;
     std::cout << "Image channels: " << m_image.channels() << std::endl;
     std::cout << "Image depth: " << m_image.depth() << std::endl;
     std::cout << "Image type: " << m_image.type() << std::endl;

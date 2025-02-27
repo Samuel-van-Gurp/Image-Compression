@@ -15,6 +15,8 @@ public:
 
     void displayImage(const std::string &title = "Image") const;
 
+    void scaleIntensity(int min = 0, int max = 255);
+
     cv::Mat getImageMatrix() const;
 
     void setImage(cv::Mat img);
