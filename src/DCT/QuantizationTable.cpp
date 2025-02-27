@@ -1,5 +1,15 @@
 #include "QuantizationTable.h"
 
+const std::vector<std::vector<int>> QuantizationTable::identityCompressionTable = {
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1},
+    {1, 1, 1, 1, 1, 1, 1, 1}};
+
 const std::vector<std::vector<int>> QuantizationTable::lowCompressionTable = {
     {2, 1, 1, 2, 3, 5, 6, 7},
     {1, 1, 2, 3, 4, 7, 8, 7},

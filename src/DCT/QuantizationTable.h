@@ -6,6 +6,7 @@
 struct QuantizationTable
 {
     // Static member variables for different compression levels
+    static const std::vector<std::vector<int>> identityCompressionTable;
     static const std::vector<std::vector<int>> lowCompressionTable;
     static const std::vector<std::vector<int>> mediumCompressionTable;
     static const std::vector<std::vector<int>> highCompressionTable;
