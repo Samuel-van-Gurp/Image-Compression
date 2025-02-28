@@ -1,4 +1,7 @@
-#include "CompressedImageHolder.h"
+#ifndef STORE_DCT_DATA_H
+#define STORE_DCT_DATA_H
+
+#include "CompressedDCTImageHolder.h"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -7,9 +10,9 @@ class StoreDCTData
 {
 
 public:
-    void writeToBinary(const std::string &fileName, const std::string &filePath, const CompressedImageHolder &compressedImageHolder);
+    void writeToBinary(const std::string &fileName, const std::string &filePath, const CompressedDCTImageHolder &compressedImageHolder);
 
-    CompressedImageHolder readFromBinary(const std::string &fileName, const std::string &filePath);
+    CompressedDCTImageHolder readFromBinary(const std::string &fileName, const std::string &filePath);
 
 private:
     static const std::string FILE_EXTENSION;
@@ -26,3 +29,5 @@ private:
 
     void validateFileExtension(const std::string &fileName) const;
 };
+
+#endif

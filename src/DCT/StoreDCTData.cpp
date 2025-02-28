@@ -2,7 +2,7 @@
 
 const std::string StoreDCTData::FILE_EXTENSION = ".samuelDCT";
 
-void StoreDCTData::writeToBinary(const std::string &fileName, const std::string &filePath, const CompressedImageHolder &compressedImageHolder)
+void StoreDCTData::writeToBinary(const std::string &fileName, const std::string &filePath, const CompressedDCTImageHolder &compressedImageHolder)
 {
     validateFileExtension(fileName);
 
@@ -20,14 +20,14 @@ void StoreDCTData::writeToBinary(const std::string &fileName, const std::string 
     outFile.close();
 }
 
-CompressedImageHolder StoreDCTData::readFromBinary(const std::string &fileName, const std::string &filePath)
+CompressedDCTImageHolder StoreDCTData::readFromBinary(const std::string &fileName, const std::string &filePath)
 {
     validateFileExtension(fileName);
 
     std::ifstream inFile;
     inFile.open(filePath + fileName, std::ios::binary);
 
-    CompressedImageHolder compressedImageHolder;
+    CompressedDCTImageHolder compressedImageHolder;
 
     inFile.read(reinterpret_cast<char *>(&compressedImageHolder.BLOCK_SIZE), sizeof(compressedImageHolder.BLOCK_SIZE));
 
