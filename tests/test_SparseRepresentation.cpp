@@ -1,6 +1,6 @@
 #include "DFT/SparseRepresentation.h"
 #include "Image.h"
-#include "DFT/ComplexRowColumnValue.h"
+#include "DFT/CompressedDFTImageHolder.h"
 #include <gtest/gtest.h>
 
 TEST(SparseRepresentationTest, SparseReprRountTrip)

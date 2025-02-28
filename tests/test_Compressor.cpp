@@ -1,4 +1,5 @@
 #include "DFT/DFTCompressor.h"
+#include "CompressionLevel.h"
 #include "Image.h"
 #include <gtest/gtest.h>
 
@@ -13,7 +14,7 @@ TEST(CompressorTest, CompressionRountTripNOCompression)
     Image randomImage = Image(RandomMatrix);
     DFTCompressor compressor;
 
-    auto SparceRep = compressor.compress(randomImage, COMPRESSION_PERCENTILE);
+    auto SparceRep = compressor.compress(randomImage,CompressionLevel::VERY_HIGH);
     Image decompressedImage = compressor.decompress(SparceRep);
 
     // Assert

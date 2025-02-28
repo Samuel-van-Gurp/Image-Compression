@@ -55,21 +55,19 @@ int main()
 
     auto img_vec = img.getImageAsVector();
 
-    CompressedImageHolder compressedImage = dctCompression.DCTCompress(img_vec, QuantizationTable::ultraHighCompressionTable);
+    CompressedDCTImageHolder compressedImage = dctCompression.DCTCompress(img_vec, CompressionLevel::VERY_HIGH);
 
     storeDCTData.writeToBinary("camera.samuelDCT", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/", compressedImage);
 
     auto compressedImageHolderReadFormFile = storeDCTData.readFromBinary("camera.samuelDCT", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
-
 
     auto reconstructedImage = dctCompression.DCTDecompress(compressedImageHolderReadFormFile);
 
     Image decompressedImg = Image(reconstructedImage);
 
     decompressedImg.scaleIntensity();
-    
-    decompressedImg.displayImage("Reconstructed Image");
 
+    decompressedImg.displayImage("Reconstructed Image");
 
     return 0;
 }
