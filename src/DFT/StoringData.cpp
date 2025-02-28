@@ -1,6 +1,6 @@
 #include "StoringData.h"
 #include "SparseRepresentation.h"
-#include "ComplexRowColumnValue.h"
+#include "CompressedDFTImageHolder.h"
 
 StoringData::StoringData()
 {
@@ -45,7 +45,7 @@ SparseRepresentation StoringData::LoadFile(const std::string &fileName, const st
     std::pair<int, int> sizeOriginalImage = readOriginalImageSize(inFile);
 
     size_t numElements;
-    std::vector<ComplexRowColumnValue> SparceVec;
+    std::vector<CompressedDFTImageHolder> SparceVec;
 
     // Read number of rows
     inFile.read(reinterpret_cast<char *>(&numElements), sizeof(numElements));
@@ -64,7 +64,7 @@ SparseRepresentation StoringData::LoadFile(const std::string &fileName, const st
         inFile.read(reinterpret_cast<char *>(&imag), sizeof(imag));
 
         // Create and store the ComplexRowColumnValue object
-        SparceVec[i] = ComplexRowColumnValue(row, col, real, imag);
+        SparceVec[i] = CompressedDFTImageHolder(row, col, real, imag);
     }
 
     return SparseRepresentation(SparceVec, sizeOriginalImage);
@@ -82,11 +82,11 @@ std::pair<int, int> StoringData::readOriginalImageSize(std::ifstream &inFile) co
 void StoringData::writeSparceRep(std::ofstream &outFile, const SparseRepresentation &sparceRep) const
 {
 
-    std::vector<ComplexRowColumnValue> SparceVec = sparceRep.getSparseElements();
+    std::vector<CompressedDFTImageHolder> SparceVec = sparceRep.getSparseElements();
 
     writeSparseVectorLength(outFile, SparceVec);
 
-    for (const ComplexRowColumnValue &element : SparceVec)
+    for (const CompressedDFTImageHolder &element : SparceVec)
     {
         int rowIdx = element.m_row;
         int colIdx = element.m_col;
@@ -100,7 +100,7 @@ void StoringData::writeSparceRep(std::ofstream &outFile, const SparseRepresentat
     }
 }
 
-void StoringData::writeSparseVectorLength(std::ofstream &outFile, const std::vector<ComplexRowColumnValue> &SparceVec) const
+void StoringData::writeSparseVectorLength(std::ofstream &outFile, const std::vector<CompressedDFTImageHolder> &SparceVec) const
 {
     size_t numRows = SparceVec.size();
     outFile.write(reinterpret_cast<char *>(&numRows), sizeof(numRows));
