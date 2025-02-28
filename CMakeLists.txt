@@ -36,6 +36,7 @@ add_library(CompressionCalc STATIC
                               src/DCT/ZigzagDCTcoefficientsOrder.cpp
                               src/DCT/DCTEncoding.cpp
                               src/DCT/StoreDCTData.cpp
+                              src/DCT/CompressedImageHolder.h
                               )
 
 # make main executable and link it with the CompressionCalc and OpenCV
