@@ -1,6 +1,10 @@
 #include "DCTTransformationHandler.h"
-#include "TwoDimDCT.h"
 #include <vector>
+
+DCTTransformationHandler::DCTTransformationHandler(const int ImageBlocksize) 
+    : m_TwoDimDCT(ImageBlocksize){
+}
+
 
 std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::DCTTransformImage(const std::vector<std::vector<float>> &image, const std::vector<std::vector<int>> &QuantizationTable, int CHUNK_SIZE) const
 {
@@ -65,12 +69,13 @@ std::function<float(float, int)> DCTTransformationHandler::multiply = [](float a
 
 std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::ApplyInverseDCTToImageChunks(const std::vector<std::vector<std::vector<float>>> &DCTImageChunks) const
 {
-    TwoDimDCT twoDimDCT;
+    // TwoDimDCT twoDimDCT = TwoDimDCT(DCTImageChunks[0]);
+    
     std::vector<std::vector<std::vector<float>>> imageChunks;
 
     for (const auto &chunk : DCTImageChunks)
     {
-        imageChunks.push_back(twoDimDCT.computeTwoDimInverseDCT(chunk));
+        imageChunks.push_back(m_TwoDimDCT.computeTwoDimInverseDCT(chunk));
     }
 
     return imageChunks;
@@ -78,12 +83,12 @@ std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::ApplyInve
 
 std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::ApplyDCTToImagechunks(const std::vector<std::vector<std::vector<float>>> &imageChunks) const
 {
-    TwoDimDCT twoDimDct;
+    // TwoDimDCT twoDimDct = TwoDimDCT(imageChunks[0]);
     std::vector<std::vector<std::vector<float>>> DCTImageChunks;
 
     for (auto const &chunk : imageChunks)
     {
-        DCTImageChunks.push_back(twoDimDct.computeTwoDimDCT(chunk));
+        DCTImageChunks.push_back(m_TwoDimDCT.computeTwoDimDCT(chunk));
     }
 
     return DCTImageChunks;

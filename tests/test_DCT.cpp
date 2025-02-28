@@ -7,7 +7,7 @@ TEST(ImageDCT, 1D_sample)
     std::vector<float> signal = {6, 10, 17};
     std::vector<float> expectedCoefficients = {19.0526f, -7.7782f, 1.2247f};
 
-    DCT dct;
+    DCT dct = DCT(static_cast<int>(signal.size())); // intialize DCT with the size of the image so it can compute the DCT matrix
 
     // Act
 
@@ -20,6 +20,7 @@ TEST(ImageDCT, 1D_sample)
     EXPECT_NEAR(expectedCoefficients[0], outputCoefficients[0], floarErr);
     EXPECT_NEAR(expectedCoefficients[1], outputCoefficients[1], floarErr);
     EXPECT_NEAR(expectedCoefficients[2], outputCoefficients[2], floarErr);
+    
 }
 
 TEST(ImageDCT, 1D_sample_inverse)
@@ -28,7 +29,7 @@ TEST(ImageDCT, 1D_sample_inverse)
     std::vector<float> expectedSignal = {6, 10, 17};
     std::vector<float> Coefficients = {19.0526f, -7.7782f, 1.2247f};
 
-    DCT dct;
+    DCT dct = DCT(static_cast<int>(Coefficients.size())); // intialize DCT with the size of the image so it can compute the DCT matrix
 
     // Act
 

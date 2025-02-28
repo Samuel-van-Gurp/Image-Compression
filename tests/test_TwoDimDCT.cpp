@@ -47,10 +47,14 @@ TEST(DCTTest, DCTRoundTrip)
     cv::Mat RandomImage(5, 5, CV_32FC1);
     cv::randu(RandomImage, 0.0, 255.0);
 
-    TwoDimDCT twoDimDCT = TwoDimDCT();
-
+    
     // Act
-    auto transformedImg = twoDimDCT.computeTwoDimDCT(matToVector(RandomImage));
+
+    auto Img_vec = matToVector(RandomImage);
+
+    TwoDimDCT twoDimDCT = TwoDimDCT(static_cast<int>(Img_vec.size()));
+
+    auto transformedImg = twoDimDCT.computeTwoDimDCT(Img_vec);
     auto inverseTransformedImg = twoDimDCT.computeTwoDimInverseDCT(transformedImg);
 
     // Assert

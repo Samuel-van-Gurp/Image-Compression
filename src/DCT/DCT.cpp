@@ -1,21 +1,25 @@
 #include "DCT.h"
 
+DCT::DCT(const int signalLenght) 
+{
+    m_DCTMatrix = computeDCTMatrix(signalLenght);
+
+    m_inverseDCTMatrix = transpose(m_DCTMatrix);
+}
+
 std::vector<float> DCT::computeDCT(const std::vector<float> &signal) const
 {
 
-    auto DCTMatrix = computeDCTMatrix(signal);
 
-    std::vector<float> out = multiplyMatrixVector(DCTMatrix, signal);
+    std::vector<float> out = multiplyMatrixVector(m_DCTMatrix, signal);
 
     return out;
 }
 
 std::vector<float> DCT::computeInverseDCT(const std::vector<float> &coeff) const
 {
-    auto DCTMatrix = computeDCTMatrix(coeff);
-    auto inverseDCTMatrix = transpose(DCTMatrix);
 
-    std::vector<float> out = multiplyMatrixVector(inverseDCTMatrix, coeff);
+    std::vector<float> out = multiplyMatrixVector(m_inverseDCTMatrix, coeff);
 
     return out;
 }
@@ -53,17 +57,15 @@ std::vector<float> DCT::multiplyMatrixVector(
     return result;
 }
 
-std::vector<std::vector<float>> DCT::computeDCTMatrix(const std::vector<float> &signal) const
+std::vector<std::vector<float>> DCT::computeDCTMatrix(int signalLength) const
 {
-    int matrixSize = static_cast<int>(signal.size());
+    std::vector<std::vector<float>> DCTMatrix(signalLength, std::vector<float>(signalLength, 0.0f));
 
-    std::vector<std::vector<float>> DCTMatrix(matrixSize, std::vector<float>(matrixSize, 0.0f));
-
-    for (int rowIndex = 0; rowIndex < matrixSize; rowIndex++)
+    for (int rowIndex = 0; rowIndex < signalLength; rowIndex++)
     {
-        for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++)
+        for (int columnIndex = 0; columnIndex < signalLength; columnIndex++)
         {
-            DCTMatrix[rowIndex][columnIndex] = static_cast<float>(computeDCTMatrixElement(rowIndex, columnIndex, matrixSize));
+            DCTMatrix[rowIndex][columnIndex] = static_cast<float>(computeDCTMatrixElement(rowIndex, columnIndex, signalLength));
         }
     }
 
@@ -72,7 +74,7 @@ std::vector<std::vector<float>> DCT::computeDCTMatrix(const std::vector<float> &
 
 double DCT::computeDCTMatrixElement(const int row_index, const int column_index, const int signalLength) const
 {
-    static_cast<int>(signalLength);
+    signalLength;
 
     if (row_index == 0)
     {
@@ -80,6 +82,6 @@ double DCT::computeDCTMatrixElement(const int row_index, const int column_index,
     }
     else
     {
-        return sqrt(2.0 / signalLength) * std::cos((M_PI * (2 * column_index + 1) * row_index) / (2 * signalLength));
+        return sqrt(2.0 / signalLength) * std::cos((PI * (2 * column_index + 1) * row_index) / (2 * signalLength));
     }
 }

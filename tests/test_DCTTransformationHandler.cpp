@@ -56,14 +56,14 @@ TEST(DCTCompressionTest, CompressDecompress)
     std::vector<std::vector<float>> inputVector = convertToVector(inputImage);
 
     // Create an instance of DCTCompression
-    DCTTransformationHandler compressor;
+    DCTTransformationHandler transformHandler(8);
 
     // Compress the image
-    std::vector<std::vector<std::vector<float>>> compressedData = compressor.DCTTransformImage(inputVector, QuantizationTable::mediumCompressionTable);
+    std::vector<std::vector<std::vector<float>>> compressedData = transformHandler.DCTTransformImage(inputVector, QuantizationTable::mediumCompressionTable);
     ASSERT_FALSE(compressedData.empty());
 
     // Decompress the image
-    std::vector<std::vector<float>> decompressedData = compressor.inverseDCTTransformImage(compressedData, QuantizationTable::mediumCompressionTable, inputImage.rows, inputImage.cols);
+    std::vector<std::vector<float>> decompressedData = transformHandler.inverseDCTTransformImage(compressedData, QuantizationTable::mediumCompressionTable, inputImage.rows, inputImage.cols);
 
     cv::Mat outputImage = convertToMat(decompressedData, inputImage.rows, inputImage.cols);
     ASSERT_FALSE(outputImage.empty());

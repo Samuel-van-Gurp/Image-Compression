@@ -1,7 +1,20 @@
 #include "TwoDimDCT.h"
 
+// constructor
+TwoDimDCT::TwoDimDCT(const int ImageBlocksize) : m_DCT(ImageBlocksize)
+{
+    
+}
+
+
+
 std::vector<std::vector<float>> TwoDimDCT::computeTwoDimDCT(const std::vector<std::vector<float>> &Image) const
 {
+    if (Image.size() != Image[0].size())
+    {
+        throw std::invalid_argument("Image block is not square");
+    }
+
     auto rowWiseTransImage = computeDCTRowWise(Image);
     auto DCTDomainImage = computeDCTColumnWise(rowWiseTransImage);
 
@@ -10,6 +23,12 @@ std::vector<std::vector<float>> TwoDimDCT::computeTwoDimDCT(const std::vector<st
 
 std::vector<std::vector<float>> TwoDimDCT::computeTwoDimInverseDCT(const std::vector<std::vector<float>> &Image) const
 {
+
+    if (Image.size() != Image[0].size())
+    {
+        throw std::invalid_argument("Image block is not square");
+    }
+
     auto rowWiseTransImage = computeInverseDCTRowWise(Image);
     auto DCTDomainImage = computeInverseDCTColumnWise(rowWiseTransImage);
 
@@ -23,12 +42,11 @@ std::vector<std::vector<float>> TwoDimDCT::computeDCTRowWise(const std::vector<s
 
     std::vector<std::vector<float>> rowWiseTransImage(rows, std::vector<float>(cols, 0.0f));
 
-    DCT dct;
 
     for (int i = 0; i < rows; ++i)
     {
         // Compute 1D DCT for the current row
-        auto dctRow = dct.computeDCT(Image[i]);
+        auto dctRow = m_DCT.computeDCT(Image[i]);
 
         rowWiseTransImage[i] = dctRow;
     }
@@ -43,7 +61,6 @@ std::vector<std::vector<float>> TwoDimDCT::computeDCTColumnWise(const std::vecto
 
     std::vector<std::vector<float>> twoDimDCTResult(rows, std::vector<float>(cols, 0.0f));
 
-    DCT dct;
 
     for (int j = 0; j < cols; ++j)
     {
@@ -53,7 +70,7 @@ std::vector<std::vector<float>> TwoDimDCT::computeDCTColumnWise(const std::vecto
             column[i] = rowWiseTransImage[i][j];
         }
 
-        auto dctCol = dct.computeDCT(column);
+        auto dctCol = m_DCT.computeDCT(column);
 
         for (int i = 0; i < rows; ++i)
         {
@@ -71,12 +88,10 @@ std::vector<std::vector<float>> TwoDimDCT::computeInverseDCTRowWise(const std::v
 
     std::vector<std::vector<float>> rowWiseTransImage(rows, std::vector<float>(cols, 0.0f));
 
-    DCT dct;
-
     for (int i = 0; i < rows; ++i)
     {
         // Compute 1D DCT for the current row
-        auto dctRow = dct.computeInverseDCT(Image[i]);
+        auto dctRow = m_DCT.computeInverseDCT(Image[i]);
 
         rowWiseTransImage[i] = dctRow;
     }
@@ -91,7 +106,6 @@ std::vector<std::vector<float>> TwoDimDCT::computeInverseDCTColumnWise(const std
 
     std::vector<std::vector<float>> twoDimDCTResult(rows, std::vector<float>(cols, 0.0f));
 
-    DCT dct;
 
     for (int j = 0; j < cols; ++j)
     {
@@ -101,7 +115,7 @@ std::vector<std::vector<float>> TwoDimDCT::computeInverseDCTColumnWise(const std
             column[i] = rowWiseTransImage[i][j];
         }
 
-        auto dctCol = dct.computeInverseDCT(column);
+        auto dctCol = m_DCT.computeInverseDCT(column);
 
         for (int i = 0; i < rows; ++i)
         {

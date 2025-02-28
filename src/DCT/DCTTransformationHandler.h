@@ -4,6 +4,7 @@
 #include "QuantizationTable.h"
 #include "ImageChopper.h"
 #include "DCT.h"
+#include "TwoDimDCT.h"
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <functional>
@@ -11,7 +12,11 @@
 class DCTTransformationHandler
 {
 public:
-    std::vector<std::vector<std::vector<float>>> DCTTransformImage(const std::vector<std::vector<float>> &image, const std::vector<std::vector<int>> &QuantizationTable, int CHUNCK_SIZE = 8) const;
+    explicit DCTTransformationHandler(const int ImageBlocksize);
+
+    std::vector<std::vector<std::vector<float>>> DCTTransformImage(const std::vector<std::vector<float>> &image,
+                                                                   const std::vector<std::vector<int>> &QuantizationTable,
+                                                                   int CHUNCK_SIZE = 8) const;
 
     std::vector<std::vector<float>> inverseDCTTransformImage(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
                                                              const std::vector<std::vector<int>> &QuantizationTable,
@@ -19,12 +24,14 @@ public:
                                                              const int originalWidth) const;
 
 private:
+    TwoDimDCT m_TwoDimDCT;
+
     std::vector<std::vector<std::vector<float>>> ApplyDCTToImagechunks(const std::vector<std::vector<std::vector<float>>> &imageChuncks) const;
     std::vector<std::vector<std::vector<float>>> ApplyInverseDCTToImageChunks(const std::vector<std::vector<std::vector<float>>> &DCTImageChuncks) const;
-    
+
     std::vector<std::vector<std::vector<float>>> QuantizeImageChunks(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
-                                                                    const std::vector<std::vector<int>> &quantizationTable,
-                                                                    std::function<float(float, int)> devideOrMultiply) const;
+                                                                     const std::vector<std::vector<int>> &quantizationTable,
+                                                                     std::function<float(float, int)> devideOrMultiply) const;
 
     static std::function<float(float, int)> divide;
     static std::function<float(float, int)> multiply;
