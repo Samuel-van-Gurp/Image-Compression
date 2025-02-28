@@ -2,9 +2,10 @@
 #define COMPRESSED_IMAGE_HOLDER_H
 
 #include "QuantizationTable.h"
+#include "BaseCompressedImageHolder.h"
 #include <vector>
 
-struct CompressedImageHolder
+struct CompressedImageHolder : public BaseCompressedImageHolder 
 {
 public:
     // All the info needed to decompress the image later on
