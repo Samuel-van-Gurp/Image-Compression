@@ -1,8 +1,58 @@
 #include "DFTCompressor.h"
 
-DFTCompressor::DFTCompressor()
+
+SparseRepresentation DFTCompressor::compress(const Image &image, CompressionLevel compressionLevel) const
 {
+
+    float percentile = getCompressionPersentile(compressionLevel);
+
+    validatePercentileRange(percentile);
+
+    DFT dft;
+
+    cv::Mat DFTImage = dft.computeDFT(image.getImageMatrix());
+    cv::Mat magnitude = dft.Magnitude(DFTImage);
+    float threshold = ComputeIntensityThreshold(magnitude, percentile);
+    cv::Mat mask = MakeSubSamplingMask(magnitude, threshold);
+    cv::Mat maskedDFTImage = applyMask(DFTImage, mask);
+
+    SparseRepresentation sparseRepr = SparseRepresentation(maskedDFTImage);
+
+    return sparseRepr;
 }
+
+Image DFTCompressor::decompress(const SparseRepresentation &sparseRepr) const
+{
+    DFT dft;
+
+    cv::Mat decodedSparceCompresDFTimage = sparseRepr.convertToDenseComplexMatrix();
+
+    cv::Mat decodedSparceCompresImage = dft.computeInverseDFT(decodedSparceCompresDFTimage);
+
+    return Image(decodedSparceCompresImage);
+}
+
+float DFTCompressor::getCompressionPersentile(CompressionLevel compressionLevel) const
+{
+    switch (compressionLevel)
+    {
+    case CompressionLevel::NONE:
+        return 100.0f;
+    case CompressionLevel::LOW:
+        return 50.0f;
+    case CompressionLevel::MEDIUM:
+        return 10.0f;
+    case CompressionLevel::HIGH:
+        return 1.0f;
+    case CompressionLevel::VERY_HIGH:
+        return 0.1f;
+    case CompressionLevel::ULTRA_HIGH:
+        return 0.01f;
+    default:
+        return 100.0f;
+    }
+}
+
 
 float const DFTCompressor::ComputeIntensityThreshold(const cv::Mat &magnitude, float percentile) const
 {
@@ -22,7 +72,7 @@ float const DFTCompressor::ComputeIntensityThreshold(const cv::Mat &magnitude, f
     return threshold;
 }
 
-void validatePercentileRange(float percentile)
+void DFTCompressor::validatePercentileRange(const float percentile) const 
 {
     if (percentile < 0.0f || percentile > 100.0f)
     {
@@ -63,30 +113,3 @@ cv::Mat DFTCompressor::applyMask(const cv::Mat &complexImage, const cv::Mat &mas
     return maskedComplexImage;
 }
 
-SparseRepresentation DFTCompressor::compress(const Image &image, float percentile) const
-{
-    validatePercentileRange(percentile);
-
-    DFT dft;
-
-    cv::Mat DFTImage = dft.computeDFT(image.getImageMatrix());
-    cv::Mat magnitude = dft.Magnitude(DFTImage);
-    float threshold = ComputeIntensityThreshold(magnitude, percentile);
-    cv::Mat mask = MakeSubSamplingMask(magnitude, threshold);
-    cv::Mat maskedDFTImage = applyMask(DFTImage, mask);
-
-    SparseRepresentation sparseRepr = SparseRepresentation(maskedDFTImage);
-
-    return sparseRepr;
-}
-
-Image DFTCompressor::decompress(const SparseRepresentation &sparseRepr) const
-{
-    DFT dft;
-
-    cv::Mat decodedSparceCompresDFTimage = sparseRepr.convertToDenseComplexMatrix();
-
-    cv::Mat decodedSparceCompresImage = dft.computeInverseDFT(decodedSparceCompresDFTimage);
-
-    return Image(decodedSparceCompresImage);
-}
