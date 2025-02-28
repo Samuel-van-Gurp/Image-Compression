@@ -10,7 +10,7 @@ SparseRepresentation::SparseRepresentation(const cv::Mat &FourierDomianImage)
     fillRowColumnComplexValue(real, imagery);
 }
 
-SparseRepresentation::SparseRepresentation(const std::vector<ComplexRowColumnValue> &sparseElements, const std::pair<int, int> &size)
+SparseRepresentation::SparseRepresentation(const std::vector<CompressedDFTImageHolder> &sparseElements, const std::pair<int, int> &size)
     : m_OriginalSizeImage(size), m_sparseElements(sparseElements)
 {
 }
@@ -25,7 +25,7 @@ void SparseRepresentation::fillRowColumnComplexValue(const cv::Mat &real, const 
             if (!isElementZero(real, imagery, rowIndex, columnIndex))
             {
                 // setRowColumnValueElement(real, imagery, rowIndex, columnIndex);
-                m_sparseElements.push_back(ComplexRowColumnValue(rowIndex, columnIndex, real.at<float>(rowIndex, columnIndex), imagery.at<float>(rowIndex, columnIndex)));
+                m_sparseElements.push_back(CompressedDFTImageHolder(rowIndex, columnIndex, real.at<float>(rowIndex, columnIndex), imagery.at<float>(rowIndex, columnIndex)));
             }
         }
     }
@@ -65,7 +65,7 @@ cv::Mat SparseRepresentation::convertToDenseComplexMatrix() const
     return complexImage;
 }
 
-std::vector<ComplexRowColumnValue> SparseRepresentation::getSparseElements() const
+std::vector<CompressedDFTImageHolder> SparseRepresentation::getSparseElements() const
 {
     return m_sparseElements;
 }

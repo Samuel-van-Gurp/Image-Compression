@@ -1,7 +1,7 @@
 #ifndef SPARSE_REPRESENTATIONS_H
 #define SPARSE_REPRESENTATIONS_H
 
-#include "ComplexRowColumnValue.h"
+#include "CompressedDFTImageHolder.h"
 #include <opencv2/core/core.hpp>
 #include <vector>
 
@@ -11,15 +11,15 @@ public:
     static constexpr int CHANNELS_COMPLEX_VALUE_ROW_COLUMN = 4;
 
     explicit SparseRepresentation(const cv::Mat &maskedDFT);
-    SparseRepresentation(const std::vector<ComplexRowColumnValue> &sparseElements, const std::pair<int, int> &size);
+    SparseRepresentation(const std::vector<CompressedDFTImageHolder> &sparseElements, const std::pair<int, int> &size);
 
     cv::Mat convertToDenseComplexMatrix() const;
-    std::vector<ComplexRowColumnValue> getSparseElements() const;
+    std::vector<CompressedDFTImageHolder> getSparseElements() const;
     std::pair<int, int> getOriginalSizeImage() const;
 
 private:
     const std::pair<int, int> m_OriginalSizeImage;
-    std::vector<ComplexRowColumnValue> m_sparseElements;
+    std::vector<CompressedDFTImageHolder> m_sparseElements;
 
     std::pair<cv::Mat, cv::Mat> splitComplexImage(const cv::Mat &complexImage) const;
     cv::Mat mergeRealAndImaginary(const cv::Mat &real, const cv::Mat &imaginary) const;
