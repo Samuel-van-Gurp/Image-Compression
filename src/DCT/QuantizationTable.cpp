@@ -59,3 +59,24 @@ const std::vector<std::vector<int>> QuantizationTable::ultraHighCompressionTable
     {96, 140, 220, 256, 324, 416, 452, 368},
     {196, 256, 312, 348, 412, 484, 480, 404},
     {288, 368, 380, 392, 448, 400, 412, 396}};
+
+const std::vector<std::vector<int>> &QuantizationTable::getQuantizationTable(const CompressionLevel &compressionLevel)
+{
+    switch (compressionLevel)
+    {
+    case CompressionLevel::NONE:
+        return identityCompressionTable;
+    case CompressionLevel::LOW:
+        return lowCompressionTable;
+    case CompressionLevel::MEDIUM:
+        return mediumCompressionTable;
+    case CompressionLevel::HIGH:
+        return highCompressionTable;
+    case CompressionLevel::VERY_HIGH:
+        return veryHighCompressionTable;
+    case CompressionLevel::ULTRA_HIGH:
+        return ultraHighCompressionTable;
+    default:
+        return identityCompressionTable;
+    }
+}
