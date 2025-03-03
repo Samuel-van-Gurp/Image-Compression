@@ -1,8 +1,8 @@
 #include "CompressionLevel.h"
 #include "Image.h"
 #include "DFT/DFT.h"
-#include "SparseRepresentation.h"
-#include "ICompressionStrategy.h" 
+#include "CompressedDFTImageHolder.h"
+#include "ICompressionStrategy.h"
 
 #include <opencv2/opencv.hpp>
 
@@ -10,11 +10,10 @@ class DFTCompressor //: public ICompressionStrategy TODO
 {
 
 public:
-    SparseRepresentation compress(const Image &image, CompressionLevel compressionLevel) const;
-    Image decompress(const SparseRepresentation &sparseRepr) const;
-    
-    private:
+    CompressedDFTImageHolder compress(const Image &image, CompressionLevel compressionLevel) const;
+    Image decompress(const CompressedDFTImageHolder &sparseRepr) const;
 
+private:
     float getCompressionPersentile(CompressionLevel) const;
     float const ComputeIntensityThreshold(const cv::Mat &img, float percentile) const;
     void validatePercentileRange(const float percentile) const;

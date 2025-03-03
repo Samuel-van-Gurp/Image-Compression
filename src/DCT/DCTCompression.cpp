@@ -2,7 +2,8 @@
 
 CompressedDCTImageHolder DCTCompression::DCTCompress(const std::vector<std::vector<float>> &image, CompressionLevel compressionLevel) const
 {
-    DCTTransformationHandler dctTransformationHandler(static_cast<int>(image.size()));
+    const int CHUNK_SIZE = 8;
+    DCTTransformationHandler dctTransformationHandler(CHUNK_SIZE);
     RunLengthEnoding runLengthEncoding;
     ZigzagDCTcoefficientsOrder zigzagOrder;
     DCTEncoding dctEncoding(runLengthEncoding, zigzagOrder);
@@ -28,7 +29,7 @@ CompressedDCTImageHolder DCTCompression::DCTCompress(const std::vector<std::vect
     return compressedImageHolder;
 }
 
-std::vector<std::vector<float>> DCTCompression::DCTDecompress(CompressedDCTImageHolder &compressedImageHolder) const
+Image DCTCompression::DCTDecompress(CompressedDCTImageHolder &compressedImageHolder) const
 {
     DCTTransformationHandler dctTransformationHandler(compressedImageHolder.BLOCK_SIZE);
 
@@ -42,5 +43,5 @@ std::vector<std::vector<float>> DCTCompression::DCTDecompress(CompressedDCTImage
                                                                                 compressedImageHolder.OriginalImageDimensions.first,
                                                                                 compressedImageHolder.OriginalImageDimensions.second);
 
-    return ReconstructedImage;
+    return Image(ReconstructedImage);
 }
