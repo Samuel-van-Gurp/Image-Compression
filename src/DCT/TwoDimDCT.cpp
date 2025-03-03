@@ -18,6 +18,11 @@ std::vector<std::vector<float>> TwoDimDCT::computeTwoDimDCT(const std::vector<st
     auto rowWiseTransImage = computeDCTRowWise(Image);
     auto DCTDomainImage = computeDCTColumnWise(rowWiseTransImage);
 
+    if (DCTDomainImage.size() != DCTDomainImage[0].size())
+    {
+        throw std::invalid_argument("DCT Image block is not square");
+    }
+
     return DCTDomainImage;
 }
 
@@ -37,6 +42,7 @@ std::vector<std::vector<float>> TwoDimDCT::computeTwoDimInverseDCT(const std::ve
 
 std::vector<std::vector<float>> TwoDimDCT::computeDCTRowWise(const std::vector<std::vector<float>> &Image) const
 {
+    
     int rows = static_cast<int>(Image.size());
     int cols = static_cast<int>(Image[0].size());
 

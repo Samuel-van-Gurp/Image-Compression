@@ -12,7 +12,17 @@ std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::DCTTransf
 
     auto imageChunks = imageChopper.chopImage(image, CHUNK_SIZE);
 
+    // throw chunks are not 8x8
+    if (imageChunks[0].size() != CHUNK_SIZE || imageChunks[0][0].size() != CHUNK_SIZE)
+    {
+        throw std::invalid_argument("Chunks are not 8x8");
+    }
     auto DCTImageChunks = ApplyDCTToImagechunks(imageChunks);
+
+    if (DCTImageChunks[0].size() != CHUNK_SIZE || DCTImageChunks[0][0].size() != CHUNK_SIZE)
+    {
+        throw std::invalid_argument("Chunks are not 8x8");
+    }
 
     auto QuantisedDCTImageChunks = QuantizeImageChunks(DCTImageChunks, QuantizationTable, divide);
     
@@ -43,6 +53,12 @@ std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::QuantizeI
     for (auto &chunk : DCTImageChunks)
     {
         std::vector<std::vector<float>> quantizedChunk(chunk.size(), std::vector<float>(chunk[0].size(), 0));
+        
+        // trow if chuncksize is not 8x8
+        if (chunk.size() != 8 || chunk[0].size() != 8)
+        {
+            throw std::invalid_argument("Chunks are not 8x8");
+        }
 
         for (size_t i = 0; i < chunk.size(); ++i)
         {
@@ -88,7 +104,11 @@ std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::ApplyDCTT
 
     for (auto const &chunk : imageChunks)
     {
-        DCTImageChunks.push_back(m_TwoDimDCT.computeTwoDimDCT(chunk));
+        auto DCTImageChunk = m_TwoDimDCT.computeTwoDimDCT(chunk);
+
+        // print size of the image chunks
+        DCTImageChunks.push_back(DCTImageChunk);
+
     }
 
     return DCTImageChunks;
