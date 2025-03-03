@@ -2,12 +2,15 @@
 
 const std::string StoreDCTData::FILE_EXTENSION = ".samuelDCT";
 
-void StoreDCTData::writeToBinary(const std::string &fileName, const std::string &filePath, const CompressedDCTImageHolder &compressedImageHolder)
+void StoreDCTData::writeToBinary(const std::string &fileName, const std::string &filePath, const BaseCompressedImageHolder  &compressedData)
 {
     validateFileExtension(fileName);
 
     std::ofstream outFile;
     outFile.open(filePath + fileName, std::ios::binary);
+
+    // cast to derived type
+    const auto &compressedImageHolder = dynamic_cast<const CompressedDCTImageHolder&>(compressedData);
 
     outFile.write(reinterpret_cast<const char *>(&compressedImageHolder.BLOCK_SIZE), sizeof(compressedImageHolder.BLOCK_SIZE));
 
@@ -20,25 +23,25 @@ void StoreDCTData::writeToBinary(const std::string &fileName, const std::string 
     outFile.close();
 }
 
-CompressedDCTImageHolder StoreDCTData::readFromBinary(const std::string &fileName, const std::string &filePath)
+std::unique_ptr<BaseCompressedImageHolder > StoreDCTData::readFromBinary(const std::string &fileName, const std::string &filePath)
 {
     validateFileExtension(fileName);
 
     std::ifstream inFile;
     inFile.open(filePath + fileName, std::ios::binary);
 
-    CompressedDCTImageHolder compressedImageHolder;
+    auto compressedImageHolder = std::make_unique<CompressedDCTImageHolder>();
 
-    inFile.read(reinterpret_cast<char *>(&compressedImageHolder.BLOCK_SIZE), sizeof(compressedImageHolder.BLOCK_SIZE));
+    inFile.read(reinterpret_cast<char *>(&compressedImageHolder->BLOCK_SIZE), sizeof(compressedImageHolder->BLOCK_SIZE));
 
-    compressedImageHolder.OriginalImageDimensions = readOriginalImageSize(inFile);
+    compressedImageHolder->OriginalImageDimensions = readOriginalImageSize(inFile);
 
-    compressedImageHolder.quantizationTable = readQuantizationTable(inFile);
+    compressedImageHolder->quantizationTable = readQuantizationTable(inFile);
 
-    compressedImageHolder.compressedImage = readCompressedImage(inFile);
+    compressedImageHolder->compressedImage = readCompressedImage(inFile);
 
     inFile.close();
-
+    // Implicit conversion from unique_ptr<CompressedDCTImageHolder> to unique_ptr<BaseCompressedImageHolder>
     return compressedImageHolder;
 }
 

@@ -2,17 +2,19 @@
 #define STORE_DCT_DATA_H
 
 #include "CompressedDCTImageHolder.h"
+#include "BaseStoreData.h"
 #include <string>
+#include <memory>
 #include <iostream>
 #include <fstream>
 
-class StoreDCTData
+class StoreDCTData : public BaseStoreData
 {
 
 public:
-    void writeToBinary(const std::string &fileName, const std::string &filePath, const CompressedDCTImageHolder &compressedImageHolder);
+    void writeToBinary(const std::string &fileName, const std::string &filePath, const BaseCompressedImageHolder &compressedImageHolder) override;
 
-    CompressedDCTImageHolder readFromBinary(const std::string &fileName, const std::string &filePath);
+    std::unique_ptr<BaseCompressedImageHolder> readFromBinary(const std::string &fileName, const std::string &filePath) override;
 
 private:
     static const std::string FILE_EXTENSION;

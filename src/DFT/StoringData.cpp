@@ -1,16 +1,15 @@
 #include "StoringData.h"
-#include "SparseRepresentation.h"
 #include "CompressedDFTImageHolder.h"
+#include "ComplexRowColumnValue.h"
 
-StoringData::StoringData()
+StoringDFTData::StoringDFTData()
 {
 }
 
-const std::string StoringData::FILE_EXTENTION = ".samuel";
+const std::string StoringDFTData::FILE_EXTENTION = ".samuel";
 
-void StoringData::SaveFile(const std::string &fileName, const std::string &filePath, const SparseRepresentation &sparceRep) const
+void StoringDFTData::writeToBinary(const std::string &fileName, const std::string &filePath, const BaseCompressedImageHolder &sparceRep) 
 {
-    // std::ofstream outFile(filePath + fileName, std::ios::binary);
 
     hasSamuelExtensionErr(fileName);
 
@@ -22,14 +21,17 @@ void StoringData::SaveFile(const std::string &fileName, const std::string &fileP
         return;
     }
 
-    writeOriginalImageSize(outFile, sparceRep.getOriginalSizeImage());
+    // cast to derived type
+    const auto &compressedImageHolder = dynamic_cast<const CompressedDFTImageHolder&>(sparceRep);
 
-    writeSparceRep(outFile, sparceRep);
+    writeOriginalImageSize(outFile, compressedImageHolder.getOriginalSizeImage());
+
+    writeSparceRep(outFile, compressedImageHolder);
 
     outFile.close();
 }
 
-SparseRepresentation StoringData::LoadFile(const std::string &fileName, const std::string &filePath) const
+std::unique_ptr<BaseCompressedImageHolder> StoringDFTData::readFromBinary(const std::string &fileName, const std::string &filePath) 
 {
     std::ifstream inFile(filePath + fileName, std::ios::binary);
 
@@ -39,13 +41,13 @@ SparseRepresentation StoringData::LoadFile(const std::string &fileName, const st
     {
         std::cerr << "Error opening file for reading\n";
         cv::Mat temp;
-        return SparseRepresentation(temp);
+        return std::make_unique<CompressedDFTImageHolder>(CompressedDFTImageHolder(temp));
     }
 
     std::pair<int, int> sizeOriginalImage = readOriginalImageSize(inFile);
 
     size_t numElements;
-    std::vector<CompressedDFTImageHolder> SparceVec;
+    std::vector<ComplexRowColumnValue> SparceVec;
 
     // Read number of rows
     inFile.read(reinterpret_cast<char *>(&numElements), sizeof(numElements));
@@ -63,14 +65,13 @@ SparseRepresentation StoringData::LoadFile(const std::string &fileName, const st
         inFile.read(reinterpret_cast<char *>(&real), sizeof(real));
         inFile.read(reinterpret_cast<char *>(&imag), sizeof(imag));
 
-        // Create and store the ComplexRowColumnValue object
-        SparceVec[i] = CompressedDFTImageHolder(row, col, real, imag);
+        SparceVec[i] = ComplexRowColumnValue(row, col, real, imag);
     }
-
-    return SparseRepresentation(SparceVec, sizeOriginalImage);
+    // Implicit conversion from unique_ptr<CompressedDFTImageHolder> to unique_ptr<BaseCompressedImageHolder>
+    return std::make_unique<CompressedDFTImageHolder>(CompressedDFTImageHolder(SparceVec, sizeOriginalImage));
 }
 
-std::pair<int, int> StoringData::readOriginalImageSize(std::ifstream &inFile) const
+std::pair<int, int> StoringDFTData::readOriginalImageSize(std::ifstream &inFile) const
 {
     int rows, cols;
     inFile.read(reinterpret_cast<char *>(&rows), sizeof(rows));
@@ -79,14 +80,14 @@ std::pair<int, int> StoringData::readOriginalImageSize(std::ifstream &inFile) co
     return std::make_pair(rows, cols);
 }
 
-void StoringData::writeSparceRep(std::ofstream &outFile, const SparseRepresentation &sparceRep) const
+void StoringDFTData::writeSparceRep(std::ofstream &outFile, const CompressedDFTImageHolder &sparceRep) const
 {
 
-    std::vector<CompressedDFTImageHolder> SparceVec = sparceRep.getSparseElements();
+    std::vector<ComplexRowColumnValue> SparceVec = sparceRep.getSparseElements();
 
     writeSparseVectorLength(outFile, SparceVec);
 
-    for (const CompressedDFTImageHolder &element : SparceVec)
+    for (const ComplexRowColumnValue &element : SparceVec)
     {
         int rowIdx = element.m_row;
         int colIdx = element.m_col;
@@ -100,30 +101,30 @@ void StoringData::writeSparceRep(std::ofstream &outFile, const SparseRepresentat
     }
 }
 
-void StoringData::writeSparseVectorLength(std::ofstream &outFile, const std::vector<CompressedDFTImageHolder> &SparceVec) const
+void StoringDFTData::writeSparseVectorLength(std::ofstream &outFile, const std::vector<ComplexRowColumnValue> &SparceVec) const
 {
     size_t numRows = SparceVec.size();
     outFile.write(reinterpret_cast<char *>(&numRows), sizeof(numRows));
 }
 
-void StoringData::writeOriginalImageSize(std::ofstream &outFile, const std::pair<int, int> &imageSize) const
+void StoringDFTData::writeOriginalImageSize(std::ofstream &outFile, const std::pair<int, int> &imageSize) const
 {
     outFile.write(reinterpret_cast<const char *>(&imageSize.first), sizeof(imageSize.first));
     outFile.write(reinterpret_cast<const char *>(&imageSize.second), sizeof(imageSize.second));
 }
 
-bool StoringData::openFileForWriting(const std::string &fileName, const std::string &filePath, std::ofstream &outFile) const
+bool StoringDFTData::openFileForWriting(const std::string &fileName, const std::string &filePath, std::ofstream &outFile) const
 {
     outFile.open(filePath + fileName, std::ios::binary);
     return outFile.is_open(); // Return true if the file was successfully opened
 }
 
-void StoringData::handleFileError() const
+void StoringDFTData::handleFileError() const
 {
     std::cerr << "Error opening file\n";
 }
 
-void StoringData::hasSamuelExtensionErr(const std::string &fileName) const
+void StoringDFTData::hasSamuelExtensionErr(const std::string &fileName) const
 {
     if (fileName.size() < FILE_EXTENTION.size() ||
         fileName.substr(fileName.size() - FILE_EXTENTION.size()) != FILE_EXTENTION)
