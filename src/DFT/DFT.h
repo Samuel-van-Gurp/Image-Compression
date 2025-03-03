@@ -1,5 +1,5 @@
 #include "Image.h"
-#include "SparseRepresentation.h"
+#include "CompressedDFTImageHolder.h"
 #include <opencv2/opencv.hpp>
 
 class DFT

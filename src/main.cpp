@@ -1,7 +1,7 @@
 #include "Image.h"
 
 #include "DFT/DFTCompressor.h"
-#include "DFT/SparseRepresentation.h"
+#include "DFT/CompressedDFTImageHolder.h"
 #include "DFT/StoringData.h"
 
 #include "DCT/DCT.h"
@@ -21,53 +21,58 @@
 int main()
 {
 
-    // Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
+    Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
 
-    // DFTCompressor compressor = DFTCompressor();
+    DFTCompressor compressor = DFTCompressor();
 
-    // // img.displayImage();
+    // img.displayImage();
 
-    // SparseRepresentation sparseRepr = compressor.compress(img, 50);
+    CompressedDFTImageHolder sparseRepr = compressor.compress(img, CompressionLevel::MEDIUM);
 
-    // StoringData storingData = StoringData();
+    StoringDFTData storingData = StoringDFTData();
 
-    // // std::cout<< "sparseRepr.getSize().first" << sparseRepr.getSize().first<<std::endl;
-    // storingData.SaveFile("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/", sparseRepr);
+    // std::cout<< "sparseRepr.getSize().first" << sparseRepr.getSize().first<<std::endl;
+    storingData.writeToBinary("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/", sparseRepr);
 
-    // auto sparseReprloaded = storingData.LoadFile("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
+    auto sparseReprloaded = storingData.readFromBinary("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
 
-    // // std::cout<< "sparseReprloaded.getSize().first" << sparseReprloaded.getSize().first<<std::endl;
+    // Explicitly cast the BaseCompressedImageHolder reference to a CompressedDCTImageHolder reference
+    CompressedDFTImageHolder &derivedHolder = dynamic_cast<CompressedDFTImageHolder&>(*sparseReprloaded);
 
-    // Image decompressedImage = compressor.decompress(sparseReprloaded);
+    Image decompressedImage = compressor.decompress(derivedHolder);
 
-    // decompressedImage.displayImage();
+    decompressedImage.displayImage();
 
     ////////////////////////
     //  DCT compression   //
     ////////////////////////
 
-    DCTCompression dctCompression;
+    // DCTCompression dctCompression;
 
-    StoreDCTData storeDCTData = StoreDCTData();
+    // StoreDCTData storeDCTData = StoreDCTData();
 
-    Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
-    img.displayImage();
+    // Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
+    // // img.displayImage();
 
-    auto img_vec = img.getImageAsVector();
+    // auto img_vec = img.getImageAsVector();
 
-    CompressedDCTImageHolder compressedImage = dctCompression.DCTCompress(img_vec, CompressionLevel::VERY_HIGH);
 
-    storeDCTData.writeToBinary("camera.samuelDCT", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/", compressedImage);
+    // CompressedDCTImageHolder compressedImage = dctCompression.DCTCompress(img_vec, CompressionLevel::ULTRA_HIGH);
 
-    auto compressedImageHolderReadFormFile = storeDCTData.readFromBinary("camera.samuelDCT", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
+    // storeDCTData.writeToBinary("camera.samuelDCT", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/", compressedImage);
 
-    auto reconstructedImage = dctCompression.DCTDecompress(compressedImageHolderReadFormFile);
+    // auto compressedImageHolderReadFormFile = storeDCTData.readFromBinary("camera.samuelDCT", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
 
-    Image decompressedImg = Image(reconstructedImage);
+    // // Explicitly cast the BaseCompressedImageHolder reference to a CompressedDCTImageHolder reference
+    // CompressedDCTImageHolder &derivedHolder = dynamic_cast<CompressedDCTImageHolder&>(*compressedImageHolderReadFormFile);
 
-    decompressedImg.scaleIntensity();
+    // auto reconstructedImage = dctCompression.DCTDecompress(derivedHolder);
 
-    decompressedImg.displayImage("Reconstructed Image");
+    // // Image decompressedImg = Image(reconstructedImage);
+
+    // reconstructedImage.scaleIntensity();
+
+    // reconstructedImage.displayImage("Reconstructed Image");
 
     return 0;
 }
