@@ -1,6 +1,6 @@
-#include "DFT/SparseRepresentation.h"
-#include "Image.h"
 #include "DFT/CompressedDFTImageHolder.h"
+#include "Image.h"
+#include "DFT/ComplexRowColumnValue.h"
 #include <gtest/gtest.h>
 
 TEST(SparseRepresentationTest, SparseReprRountTrip)
@@ -14,7 +14,7 @@ TEST(SparseRepresentationTest, SparseReprRountTrip)
     channels[1].at<float>(1, 2) = 2.71f; // imaginary part
     cv::merge(channels, complexMatrix);
 
-    SparseRepresentation sparseRep(complexMatrix);
+    CompressedDFTImageHolder sparseRep(complexMatrix);
 
     auto sparseElements = sparseRep.getSparseElements();
 
