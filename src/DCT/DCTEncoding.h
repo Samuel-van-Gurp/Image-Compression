@@ -19,7 +19,7 @@ public:
     }
 
     template <typename T>
-    std::vector<std::vector<std::vector<T>>> decodeImageBlocks(std::vector<std::vector<std::pair<T, int>>> &encodeImageBlocks) const
+    std::vector<std::vector<std::vector<T>>> decodeImageBlocks(const std::vector<std::vector<std::pair<T, int>>> &encodeImageBlocks) const
     {
         auto decodedBlocks = m_runlengthEnoding.RunLengthDecodeImageBlocks<T>(encodeImageBlocks);
         return m_zigzagDCTcoefficientsOrder.deZigZagOrderImageBlocks(decodedBlocks);
