@@ -3,6 +3,7 @@
 
 #include "CompressionLevel.h"
 #include <vector>
+#include <string>
 
 struct QuantizationTable
 {
@@ -16,6 +17,7 @@ struct QuantizationTable
 
     // translate the compression level to the corresponding quantization table
     static const std::vector<std::vector<int>> &getQuantizationTable(const CompressionLevel &compressionLevel);
+    const CompressionLevel getCompressionLevel(const std::string &compressionLevel);
 };
 
 #endif // JPEGQUANTIZATIONTABLE_H

@@ -80,3 +80,35 @@ const std::vector<std::vector<int>> &QuantizationTable::getQuantizationTable(con
         return identityCompressionTable;
     }
 }
+
+const CompressionLevel QuantizationTable::getCompressionLevel(const std::string &compressionLevel)
+{
+    if (compressionLevel == "NONE")
+    {
+        return CompressionLevel::NONE;
+    }
+    else if (compressionLevel == "LOW")
+    {
+        return CompressionLevel::LOW;
+    }
+    else if (compressionLevel == "MEDIUM")
+    {
+        return CompressionLevel::MEDIUM;
+    }
+    else if (compressionLevel == "HIGH")
+    {
+        return CompressionLevel::HIGH;
+    }
+    else if (compressionLevel == "VERY_HIGH")
+    {
+        return CompressionLevel::VERY_HIGH;
+    }
+    else if (compressionLevel == "ULTRA_HIGH")
+    {
+        return CompressionLevel::ULTRA_HIGH;
+    }
+    else
+    {
+        return CompressionLevel::NONE;
+    }
+}
