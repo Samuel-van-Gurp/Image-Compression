@@ -59,7 +59,7 @@ TEST(DCTCompressionTest, CompressDecompress)
     DCTTransformationHandler transformHandler(8);
 
     // Compress the image
-    std::vector<std::vector<std::vector<float>>> compressedData = transformHandler.DCTTransformImage(inputVector, QuantizationTable::mediumCompressionTable);
+    std::vector<std::vector<std::vector<float>>> compressedData = transformHandler.DCTTransformImage(inputVector, CompressionLevel::MEDIUM, 8);
     ASSERT_FALSE(compressedData.empty());
 
     // Decompress the image

@@ -14,8 +14,8 @@ TEST(CompressorTest, CompressionRountTripNOCompression)
     Image randomImage = Image(RandomMatrix);
     DFTCompressor compressor;
 
-    auto SparceRep = compressor.compress(randomImage,CompressionLevel::VERY_HIGH);
-    Image decompressedImage = compressor.decompress(SparceRep);
+    std::unique_ptr<BaseCompressedImageHolder> SparceRep = compressor.compress(randomImage,CompressionLevel::VERY_HIGH);
+    Image decompressedImage = compressor.decompress(*SparceRep);
 
     // Assert
 
