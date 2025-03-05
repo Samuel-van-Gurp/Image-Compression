@@ -1,0 +1,193 @@
+@startuml
+interface ICompressionStrategy {
+  + compress()
+  + decompress()
+}
+
+
+class DFT {
+  + computeDFT()
+  + computeInverseDFT()
+  + Magnitude()
+  - prepareComplex2channelMat()
+  - convertTOFloatMat()
+}
+
+class DFTCompressor {
+  + compress()
+  + decompress()
+  - getCompressionPersentile()
+  - ComputeIntensityThreshold()
+  - validatePercentileRange()
+  - MakeSubSamplingMask()
+  - applyMask()
+}
+ICompressionStrategy <|.. DFTCompressor
+ICompressionStrategy <|.. DCTCompression
+DFTCompressor --> DFT
+
+BaseStoreData<|.. StoringDFTData
+BaseStoreData<|.. StoreDCTData
+
+abstract class BaseCompressedImageHolder {
+  + ~BaseCompressedImageHolder()
+}
+
+class CompressedDFTImageHolder {
+  + convertToDenseComplexMatrix()
+  + getSparseElements()
+  + getOriginalSizeImage()
+  - splitComplexImage()
+  - mergeRealAndImaginary()
+  - fillRowColumnComplexValue()
+  - isElementZero()
+}
+BaseCompressedImageHolder<|.. CompressedDFTImageHolder 
+BaseCompressedImageHolder<|.. CompressedDCTImageHolder 
+class ComplexRowColumnValue {
+  + m_row
+  + m_col
+  + m_real
+  + m_imag
+  + ComplexRowColumnValue()
+}
+CompressedDFTImageHolder --> ComplexRowColumnValue
+
+class StoringDFTData {
+  + writeToBinary()
+  + readFromBinary()
+  - openFileForWriting()
+  - handleFileError()
+  - hasSamuelExtensionErr()
+  - writeOriginalImageSize()
+  - writeSparceRep()
+  - writeSparseVectorLength()
+  - readOriginalImageSize()
+}
+StoringDFTData ..> CompressedDFTImageHolder
+
+class DCTCompression {
+  + compress()
+  + decompress()
+}
+
+class DCTTransformationHandler {
+  + DCTTransformationHandler()
+  + DCTTransformImage()
+  + inverseDCTTransformImage()
+  - ApplyDCTToImagechunks()
+  - QuantizeImageChunks()
+}
+
+class TwoDimDCT {
+  + transform2D()
+  + inverse2D()
+}
+
+class DCT {
+  + DCT()
+  + computeDCT()
+  + computeInverseDCT()
+  - inplaceTranspose()
+  - computeDCTMatrix()
+  - computeDCTMatrixElement()
+  - transpose()
+  - multiplyMatrixVector()
+  - m_DCTMatrix
+  - m_inverseDCTMatrix
+}
+TwoDimDCT--> DCT
+DCTTransformationHandler --> TwoDimDCT
+
+class DCTEncoding {
+  + encodeImageBlocks()
+  + decodeImageBlocks()
+}
+DCTEncoding --> RunLengthEnoding
+DCTEncoding --> ZigzagDCTcoefficientsOrder
+
+class RunLengthEnoding {
+  + encode()
+  + decode()
+}
+
+class ZigzagDCTcoefficientsOrder {
+  + ZigZagOrderImageBlocks()
+  + deZigZagOrderImageBlocks()
+}
+
+class QuantizationTable {
+  {static} + identityCompressionTable
+  {static} + lowCompressionTable
+  {static} + mediumCompressionTable
+  {static} + highCompressionTable
+  {static} + veryHighCompressionTable
+  {static} + ultraHighCompressionTable
+  {static} + getQuantizationTable()
+  + getCompressionLevel()
+}
+
+class ImageChopper {
+  + chopImage()
+  + reconstructImage()
+  + padImage()
+  + extractImageBlock()
+  + insertImageBlock()
+}
+
+class StoreDCTData {
+  + writeToBinary()
+  + readFromBinary()
+  - writeOriginalImageSize()
+  - writeQuantizationTable()
+  - writeCompressedImage()
+  - readOriginalImageSize()
+  - readQuantizationTable()
+  - readCompressedImage()
+  - validateFileExtension()
+}
+
+class CompressedDCTImageHolder {
+  + compressedImage
+  + OriginalImageDimensions
+  + BLOCK_SIZE
+  + quantizationTable
+}
+
+DCTCompression --> DCTTransformationHandler
+DCTCompression --> DCTEncoding
+DCTCompression --> QuantizationTable
+DCTCompression --> CompressedDCTImageHolder
+DFTCompressor --> CompressedDFTImageHolder
+DCTTransformationHandler --> ImageChopper
+StoreDCTData --> CompressedDCTImageHolder
+
+class Image {
+  + Image()
+  + Image(param)
+  + readToGrayScale()
+  + displayImage()
+  + scaleIntensity()
+  + convertTCV_8UC1()
+  + getImageMatrix()
+  + getImageAsVector()
+}
+
+enum CompressionLevel {
+  NONE
+  LOW
+  MEDIUM
+  HIGH
+  VERY_HIGH
+  ULTRA_HIGH
+}
+
+abstract class BaseCompressedImageHolder {
+  + ~BaseCompressedImageHolder()
+}
+
+abstract class BaseStoreData {
+  + writeToBinary()
+  + readFromBinary()
+}
+@enduml
