@@ -6,12 +6,12 @@
 
 #include <opencv2/opencv.hpp>
 
-class DFTCompressor //: public ICompressionStrategy TODO
+class DFTCompressor : public ICompressionStrategy
 {
 
 public:
-    CompressedDFTImageHolder compress(const Image &image, CompressionLevel compressionLevel) const;
-    Image decompress(const CompressedDFTImageHolder &sparseRepr) const;
+    std::unique_ptr<BaseCompressedImageHolder> compress(const Image &image, CompressionLevel compressionLevel) const;
+    Image decompress(BaseCompressedImageHolder &sparseRepr) const;
 
 private:
     float getCompressionPersentile(CompressionLevel) const;

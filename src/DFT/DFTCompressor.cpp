@@ -1,6 +1,6 @@
 #include "DFTCompressor.h"
 
-CompressedDFTImageHolder DFTCompressor::compress(const Image &image, CompressionLevel compressionLevel) const
+std::unique_ptr<BaseCompressedImageHolder> DFTCompressor::compress(const Image &image, CompressionLevel compressionLevel) const
 {
 
     float percentile = getCompressionPersentile(compressionLevel);
@@ -17,14 +17,19 @@ CompressedDFTImageHolder DFTCompressor::compress(const Image &image, Compression
 
     CompressedDFTImageHolder sparseRepr = CompressedDFTImageHolder(maskedDFTImage);
 
-    return sparseRepr;
+    auto sparseRepr_ptr = std::make_unique<CompressedDFTImageHolder>(sparseRepr);
+
+    return sparseRepr_ptr; // impisit conversion from unique_ptr<CompressedDFTImageHolder> to unique_ptr<unique_ptrBaseCompressedImageHolder>
 }
 
-Image DFTCompressor::decompress(const CompressedDFTImageHolder &sparseRepr) const
+Image DFTCompressor::decompress(BaseCompressedImageHolder &sparseRepr) const
 {
     DFT dft;
 
-    cv::Mat decodedSparceCompresDFTimage = sparseRepr.convertToDenseComplexMatrix();
+    // cast to derived type
+    const auto &sparseRepr_derivedtype = dynamic_cast<const CompressedDFTImageHolder &>(sparseRepr);
+
+    cv::Mat decodedSparceCompresDFTimage = sparseRepr_derivedtype.convertToDenseComplexMatrix();
 
     cv::Mat decodedSparceCompresImage = dft.computeInverseDFT(decodedSparceCompresDFTimage);
 

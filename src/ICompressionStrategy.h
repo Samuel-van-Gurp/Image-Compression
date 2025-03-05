@@ -12,9 +12,9 @@ class ICompressionStrategy
 public:
     virtual ~ICompressionStrategy() = default;
 
-    virtual BaseCompressedImageHolder compress(const Image &image, const CompressionLevel compressionlevel) const = 0;
+    virtual std::unique_ptr<BaseCompressedImageHolder> compress(const Image &image, const CompressionLevel compressionlevel) const = 0;
 
-    virtual Image decompress(const CompressionLevel &compressedData) const = 0;
+    virtual Image decompress(BaseCompressedImageHolder &compressedData) const = 0;
 
 };
 

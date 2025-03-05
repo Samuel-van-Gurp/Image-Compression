@@ -1,6 +1,6 @@
 #include "DCTCompression.h"
 
-CompressedDCTImageHolder DCTCompression::DCTCompress(const std::vector<std::vector<float>> &image, CompressionLevel compressionLevel) const
+std::unique_ptr<BaseCompressedImageHolder> DCTCompression::compress(const Image &image, CompressionLevel compressionLevel) const
 {
     const int CHUNK_SIZE = 8;
     DCTTransformationHandler dctTransformationHandler(CHUNK_SIZE);
@@ -8,29 +8,33 @@ CompressedDCTImageHolder DCTCompression::DCTCompress(const std::vector<std::vect
     ZigzagDCTcoefficientsOrder zigzagOrder;
     DCTEncoding dctEncoding(runLengthEncoding, zigzagOrder);
 
-    if (image.empty())
+    auto imageVector = image.getImageAsVector();
+
+    if (imageVector.empty())
     {
         throw std::invalid_argument("Image is empty");
     }
 
-    auto quantizationTable = QuantizationTable::getQuantizationTable(compressionLevel);
 
-    auto tranformedImage = dctTransformationHandler.DCTTransformImage(image, quantizationTable);
+    auto tranformedImage = dctTransformationHandler.DCTTransformImage(imageVector, compressionLevel);
 
     std::vector<std::vector<std::pair<float, int>>> encodedImage = dctEncoding.encodeImageBlocks(tranformedImage);
 
     // fill the compressed image holder
-    CompressedDCTImageHolder compressedImageHolder;
-    compressedImageHolder.quantizationTable = quantizationTable;
-    compressedImageHolder.compressedImage = encodedImage;
-    compressedImageHolder.OriginalImageDimensions = std::make_pair(static_cast<int>(image.size()), static_cast<int>(image[0].size()));
-    compressedImageHolder.BLOCK_SIZE = 8;
+    auto compressedImageHolder = std::make_unique<CompressedDCTImageHolder>();
+    compressedImageHolder->quantizationTable = QuantizationTable::getQuantizationTable(compressionLevel);
+    compressedImageHolder->compressedImage = encodedImage;
+    compressedImageHolder->OriginalImageDimensions = std::make_pair(static_cast<int>(imageVector.size()), static_cast<int>(imageVector[0].size()));
+    compressedImageHolder->BLOCK_SIZE = 8;
 
     return compressedImageHolder;
 }
 
-Image DCTCompression::DCTDecompress(CompressedDCTImageHolder &compressedImageHolder) const
+Image DCTCompression::decompress(BaseCompressedImageHolder& compressedData) const
 {
+    // cast to derived type
+    const auto &compressedImageHolder = dynamic_cast<const CompressedDCTImageHolder&>(compressedData);
+
     DCTTransformationHandler dctTransformationHandler(compressedImageHolder.BLOCK_SIZE);
 
     RunLengthEnoding runLengthEncoding;
@@ -39,7 +43,7 @@ Image DCTCompression::DCTDecompress(CompressedDCTImageHolder &compressedImageHol
 
     auto decoded = dctEncoding.decodeImageBlocks(compressedImageHolder.compressedImage);
 
-    auto ReconstructedImage = dctTransformationHandler.inverseDCTTransformImage(decoded, compressedImageHolder.quantizationTable,
+    auto ReconstructedImage = dctTransformationHandler.inverseDCTTransformImage(decoded,compressedImageHolder.quantizationTable,
                                                                                 compressedImageHolder.OriginalImageDimensions.first,
                                                                                 compressedImageHolder.OriginalImageDimensions.second);
 
