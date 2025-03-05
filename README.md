@@ -1,8 +1,9 @@
 # Image-Compression
 
-## Overview
+## Introduction
 
-Image-Compression is a tool designed to compress images into a custom ".samuel" file format, aiming to store images more compactly. This project combines interests in image processing and software engineering, providing a platform to practice building a larger project with multiple interdependent parts.
+To make the most of my time between assignments, I took on this personal project that combined my interest in image processing with software development. I developed a lossy image compression tool from scratch in C++, inspired by the techniques used in the JPEG standard. This involved implementing the discrete cosine transform, various encoding techniques, and creating a custom binary file format, which I named “.samuel,” to store the compressed data.
+Beyond the nice mathematical of image compression, this project also deepened my understanding of software development as it grew in complexity. I applied design patterns and set up automated unit testing using GitHub Actions and CMake.
 
 ## Features
 
@@ -11,7 +12,7 @@ Image-Compression is a tool designed to compress images into a custom ".samuel" 
 - **Multiple Compression Levels**: Support for various compression levels to balance quality and file size.
 - **Unit Testing**: Comprehensive unit tests to ensure code reliability.
 - **OO Design**: Object-oriented design principles for maintainable and scalable code.
-- **Interface**: Command-line interface for easy interaction with the tool.
+- **Interface**: Command-line interface for easy interaction with the tool (WIP).
 
 ## Goals
 
@@ -21,16 +22,31 @@ Image-Compression is a tool designed to compress images into a custom ".samuel" 
 - Create a user-friendly interface.
 
 ## Compression Strategy
+```
 
-The tool transforms images into a new domain where only a few important values are retained, discarding the rest. This process is similar to the JPEG compression technique. The retained values are then used to reconstruct the image, achieving a state close to the original.
+┌─────────────┐     ┌──────────────────────┐     ┌─────────┐    ┌────────────┐
+│ Input Image │ --> │ Transformer/compress │ --> │ Encoder │ -->| Compressed │
+└─────────────┘     └──────────────────────┘     └─────────┘    └────────────┘
+      |                                                               ^
+      |                                                               |                   
+      └───────────────────────────────────────────────────────────────┘
+                                 Decompression
+```
+In very simple terms, lossy compression is based on the fact that we can transform an image into a new domain. In this domain, only a few data points have a significant value. This means that we can discard all other data points and still reconstruct the image to a reasonable level.
 
+The best-known of such transforms is the Fourier Transform (FT). The FT can deconstruct a signal into a weighted sum of sine and cosine functions. The weights are called the Fourier coefficients. Other transforms with similar properties include the cosine transform (also used in this project and JPEG) as well as wavelet transforms and many others.
 
+In the image below, an example is given of compression using the Fourier Transform. You can see that most coefficients close to the edge (high frequencies) are close to zero. So we can set them to zero and still reconstruct the image. It's easy to see how this could be used to store images efficiently.
 
-## Code Documentation 
+![Fourier compression](lowpass.gif)
+One difference between this example and my implementation is that I don’t set an area of the image to zero, but I set the lowest values to zero. This is to retain  
+high-frequency coefficients that are significant.
+
+## Software Design 
 
 here is an figure of the class diagram (WIP)
 
-![Class Diagram](class_diagram.png)
+![Class Diagram](class_diagram.svg)
 
 ## **Discrete Cosine Transform (DCT) Implementation**
 
