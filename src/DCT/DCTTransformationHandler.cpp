@@ -6,9 +6,11 @@ DCTTransformationHandler::DCTTransformationHandler(const int ImageBlocksize)
 }
 
 
-std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::DCTTransformImage(const std::vector<std::vector<float>> &image, const std::vector<std::vector<int>> &QuantizationTable, int CHUNK_SIZE) const
+std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::DCTTransformImage(const std::vector<std::vector<float>> &image, const CompressionLevel &compressionLevel, int CHUNK_SIZE) const
 {
     ImageChopper imageChopper;
+    
+    auto quantizationTable = QuantizationTable::getQuantizationTable(compressionLevel);
 
     auto imageChunks = imageChopper.chopImage(image, CHUNK_SIZE);
 
@@ -24,7 +26,7 @@ std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::DCTTransf
         throw std::invalid_argument("Chunks are not 8x8");
     }
 
-    auto QuantisedDCTImageChunks = QuantizeImageChunks(DCTImageChunks, QuantizationTable, divide);
+    auto QuantisedDCTImageChunks = QuantizeImageChunks(DCTImageChunks,quantizationTable , divide);
     
     return QuantisedDCTImageChunks;
 }

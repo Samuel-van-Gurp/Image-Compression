@@ -2,6 +2,7 @@
 #define DCT_TRANSFORMATION_HANDLER_H
 
 #include "QuantizationTable.h"
+#include "CompressionLevel.h"
 #include "ImageChopper.h"
 #include "DCT.h"
 #include "TwoDimDCT.h"
@@ -15,11 +16,13 @@ public:
     explicit DCTTransformationHandler(const int ImageBlocksize);
 
     std::vector<std::vector<std::vector<float>>> DCTTransformImage(const std::vector<std::vector<float>> &image,
-                                                                   const std::vector<std::vector<int>> &QuantizationTable,
+                                                                   const CompressionLevel &compressionLevel,
                                                                    int CHUNCK_SIZE = 8) const;
 
+    std::vector<std::vector<float>> inverseDCTTransformImage(std::vector<std::vector<std::vector<float>>> &DCTImageChunks, const std::vector<std::vector<int>> &QuantizationTable, const int originalHeight, const int originalWidth) const;
+
     std::vector<std::vector<float>> inverseDCTTransformImage(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
-                                                             const std::vector<std::vector<int>> &QuantizationTable,
+                                                             const CompressionLevel &compressionLevel,
                                                              const int originalHeight,
                                                              const int originalWidth) const;
 
