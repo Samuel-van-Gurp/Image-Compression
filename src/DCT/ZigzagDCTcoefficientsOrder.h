@@ -8,10 +8,10 @@
 class ZigzagDCTcoefficientsOrder
 {
 public:
-    std::vector<std::vector<float>> ZigZagOrderImageBlocks(std::vector<std::vector<std::vector<float>>> &imageChuncks) const;
+    std::vector<std::vector<float>> ZigZagOrderImageBlocks( std::vector<std::vector<std::vector<float>>> &imageChuncks) const;
 
-    std::vector<std::vector<std::vector<float>>> deZigZagOrderImageBlocks(std::vector<std::vector<float>> &imageChuncks) const;
-
+    std::vector<std::vector<std::vector<float>>> deZigZagOrderImageBlocks(const std::vector<std::vector<float>> &imageChuncks) const;
+    
 private:
     RunLengthEnoding m_runlengthEnoding;
 

@@ -53,7 +53,7 @@ std::vector<float> ZigzagDCTcoefficientsOrder::extractZigzagDiagonal(const std::
     return diagonal;
 }
 
-std::vector<std::vector<std::vector<float>>> ZigzagDCTcoefficientsOrder::deZigZagOrderImageBlocks(std::vector<std::vector<float>> &encodedImageBlocks) const
+std::vector<std::vector<std::vector<float>>> ZigzagDCTcoefficientsOrder::deZigZagOrderImageBlocks(const std::vector<std::vector<float>> &encodedImageBlocks) const
 {
     std::vector<std::vector<std::vector<float>>> decodedImageBlocks;
     for (const auto &zigzagOrder : encodedImageBlocks)
