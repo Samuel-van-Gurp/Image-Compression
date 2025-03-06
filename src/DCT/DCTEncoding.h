@@ -1,7 +1,7 @@
 #ifndef DCT_ENCODING_H
 #define DCT_ENCODING_H
 
-#include "zigzagDCTcoefficientsOrder.h"
+#include "ZigzagDCTcoefficientsOrder.h"
 #include "runLengthEnoding.h"
 #include <vector>
 
