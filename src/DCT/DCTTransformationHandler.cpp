@@ -87,7 +87,6 @@ std::function<float(float, int)> DCTTransformationHandler::multiply = [](float a
 
 std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::ApplyInverseDCTToImageChunks(const std::vector<std::vector<std::vector<float>>> &DCTImageChunks) const
 {
-    // TwoDimDCT twoDimDCT = TwoDimDCT(DCTImageChunks[0]);
     
     std::vector<std::vector<std::vector<float>>> imageChunks;
 
@@ -101,14 +100,12 @@ std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::ApplyInve
 
 std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::ApplyDCTToImagechunks(const std::vector<std::vector<std::vector<float>>> &imageChunks) const
 {
-    // TwoDimDCT twoDimDct = TwoDimDCT(imageChunks[0]);
     std::vector<std::vector<std::vector<float>>> DCTImageChunks;
 
     for (auto const &chunk : imageChunks)
     {
         auto DCTImageChunk = m_TwoDimDCT.computeTwoDimDCT(chunk);
 
-        // print size of the image chunks
         DCTImageChunks.push_back(DCTImageChunk);
 
     }
