@@ -108,6 +108,7 @@ void Image::ImageReport() const
 
     std::cout << "Image intensity distribution: " << std::endl;
     std::cout << "Min intensity: " << minVal << std::endl;
+    std::cout << "Max intensity: " << maxVal << std::endl;
     std::cout << "Mean intensity: " << mean[0] << std::endl;
     std::cout << "Standard deviation: " << stddev[0] << std::endl;
     std::cout << "Standard deviation: " << stddev << std::endl;
