@@ -4,6 +4,7 @@
 #include "QuantizationTable.h"
 #include "BaseCompressedImageHolder.h"
 #include <vector>
+#include <iostream>
 
 struct CompressedDCTImageHolder : public BaseCompressedImageHolder
 {
@@ -14,6 +15,8 @@ public:
     int BLOCK_SIZE;
 
     std::vector<std::vector<int>> quantizationTable;
+
+    float getCompressionRatio();
 };
 
 #endif // COMPRESSED_DCT_IMAGE_HOLDER_H
