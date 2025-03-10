@@ -1,6 +1,6 @@
 #include "CompressedDCTImageHolder.h"
 
-float CompressedDCTImageHolder::getCompressionRatio()
+float CompressedDCTImageHolder::getCompressionRatio() const
 {
 
     // structured binding to read pair
@@ -11,7 +11,7 @@ float CompressedDCTImageHolder::getCompressionRatio()
     for (const auto &block : compressedImage)
     {
         block;
-        totalpairs += block.size();
+        totalpairs += static_cast<int>(block.size());
 
     }
     const int numberOfVelues = totalpairs;

@@ -75,6 +75,14 @@ std::pair<int, int> CompressedDFTImageHolder::getOriginalSizeImage() const
     return m_OriginalSizeImage;
 }
 
+float CompressedDFTImageHolder::getCompressionRatio() const
+{
+    int totalpairs = static_cast<int>(m_sparseElements.size());
+    const int numberOfVelues = totalpairs;
+
+    return static_cast<float>(m_OriginalSizeImage.first * m_OriginalSizeImage.second) / (numberOfVelues);
+}
+
 cv::Mat CompressedDFTImageHolder::mergeRealAndImaginary(const cv::Mat &real, const cv::Mat &imaginary) const
 {
     std::vector<cv::Mat> channels = {real, imaginary};

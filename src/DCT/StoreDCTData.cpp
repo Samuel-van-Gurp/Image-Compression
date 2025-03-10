@@ -1,6 +1,6 @@
 #include "StoreDCTData.h"
 
-const std::string StoreDCTData::FILE_EXTENSION = ".samuelDCT";
+const std::string StoreDCTData::FILE_EXTENSION = ".samuel";
 
 void StoreDCTData::writeToBinary(const std::string &fileName, const std::string &filePath, const BaseCompressedImageHolder  &compressedData)
 {

@@ -16,7 +16,7 @@ public:
 
     std::vector<std::vector<int>> quantizationTable;
 
-    float getCompressionRatio();
+    float getCompressionRatio() const override;
 };
 
 #endif // COMPRESSED_DCT_IMAGE_HOLDER_H

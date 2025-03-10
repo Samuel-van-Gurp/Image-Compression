@@ -6,7 +6,7 @@
 
 int main()
 {
-    ImageCompressionAPI api = ImageCompressionAPI(Method::DFT);
+    ImageCompressionAPI api = ImageCompressionAPI(Method::DCT);
 
     Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
 
@@ -18,7 +18,11 @@ int main()
 
     Image reconImage = api.decompress(*compressedImageHolderReadFormFile);
 
-    reconImage.displayImage("Reconstructed Image");
+    float compressionRatio = compressedImageHolderReadFormFile->getCompressionRatio();
+
+    reconImage.displayImage("Reconstructed Image (compression ratio: " + std::to_string(compressionRatio) + ")" );
+
+    
 
     return 0;
 }

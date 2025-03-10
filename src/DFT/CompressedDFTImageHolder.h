@@ -17,6 +17,7 @@ public:
     std::vector<ComplexRowColumnValue> getSparseElements() const;
     std::pair<int, int> getOriginalSizeImage() const;
 
+    float getCompressionRatio() const override;
     
 
 private:
