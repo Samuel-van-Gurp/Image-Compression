@@ -1,17 +1,21 @@
+#ifndef STORING_DATA_H
+#define STORING_DATA_H
+
 #include "Image.h"
 #include "CompressedDFTImageHolder.h"
 #include "BaseCompressedImageHolder.h"
+#include "BaseStoreData.h"
 #include <iostream>
 #include <fstream>
 #include <memory>
 #include <vector>
 
-class StoringDFTData //: public BaseStoreData
+class StoringDFTData : public BaseStoreData
 {
 public:
     StoringDFTData();
-    void writeToBinary(const std::string &fileName, const std::string &filePath, const BaseCompressedImageHolder &sparceRep) ;
-    std::unique_ptr<BaseCompressedImageHolder> readFromBinary(const std::string &fileName, const std::string &filePath) ;
+    void writeToBinary(const std::string &fileName, const std::string &filePath, const BaseCompressedImageHolder &sparceRep) override;
+    std::unique_ptr<BaseCompressedImageHolder> readFromBinary(const std::string &fileName, const std::string &filePath) override;
 
 private:
     static const std::string FILE_EXTENTION;
@@ -26,3 +30,4 @@ private:
     bool openFileForReading(const std::string &filePath, const std::string &fileName, std::ifstream &file) const;
     bool openFileCheckForErr(const std::string &filePath, const std::string &fileName, std::ifstream &file) const;
 };
+#endif // STORING_DATA_H
