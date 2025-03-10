@@ -1,3 +1,6 @@
+#ifndef DFT_COMPRESSOR_H
+#define DFT_COMPRESSOR_H
+
 #include "CompressionLevel.h"
 #include "Image.h"
 #include "DFT/DFT.h"
@@ -20,3 +23,5 @@ private:
     cv::Mat MakeSubSamplingMask(const cv::Mat &img, float threshold) const;
     cv::Mat applyMask(const cv::Mat &complexImage, const cv::Mat &mask) const;
 };
+
+#endif // DFT_COMPRESSOR_H
