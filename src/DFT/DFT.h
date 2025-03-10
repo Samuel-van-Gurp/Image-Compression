@@ -1,3 +1,6 @@
+#ifndef DFT_H
+#define DFT_H
+
 #include "Image.h"
 #include "CompressedDFTImageHolder.h"
 #include <opencv2/opencv.hpp>
@@ -13,3 +16,5 @@ private:
     cv::Mat prepareComplex2channelMat(const cv::Mat &floatImage) const;
     cv::Mat convertTOFloatMat(const cv::Mat &img) const;
 };
+
+#endif // DFT_H
