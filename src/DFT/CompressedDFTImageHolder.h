@@ -17,6 +17,8 @@ public:
     std::vector<ComplexRowColumnValue> getSparseElements() const;
     std::pair<int, int> getOriginalSizeImage() const;
 
+    
+
 private:
     const std::pair<int, int> m_OriginalSizeImage;
     std::vector<ComplexRowColumnValue> m_sparseElements;
