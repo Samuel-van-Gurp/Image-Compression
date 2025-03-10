@@ -18,6 +18,8 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 # Make a library of the main code
 add_library(CompressionCalc STATIC 
+                              src/API/ImageCompressionAPI.cpp
+                              
                               src/Image.cpp
                               src/RunLengthEnoding.h
                               src/BaseCompressedImageHolder.h
@@ -38,7 +40,7 @@ add_library(CompressionCalc STATIC
                               src/DCT/ZigzagDCTcoefficientsOrder.cpp
                               src/DCT/DCTEncoding.cpp
                               src/DCT/StoreDCTData.cpp
-                              src/DCT/CompressedDCTImageHolder.h
+                              src/DCT/CompressedDCTImageHolder.cpp
                               )
 
 # make main executable and link it with the CompressionCalc and OpenCV
