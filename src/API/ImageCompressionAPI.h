@@ -4,7 +4,7 @@
 #include "Image.h"
 #include "CompressionLevel.h"
 
-#include "DCT/DCTCOmpression.h"
+#include "DCT/DCTCompression.h"
 #include "DFT/DFTCompressor.h"
 #include "DFT/StoringData.h"
 #include "DCT/StoreDCTData.h"
