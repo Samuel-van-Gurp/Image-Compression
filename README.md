@@ -163,7 +163,7 @@ Now that we have orderd the image blocks in to
 
 ## Software Design 
 
-here is an figure of the class diagram (WIP)
+I tried to structure the code using the strategy pattern where there are now two strategys DFT and DCT. 
 
 ![Class Diagram](class_diagram.svg)
 
