@@ -1,26 +1,58 @@
 # Image-Compression
 
-# Introduction
+## Introduction
 
-To make the most of my time between assignments, I took on this personal project that combined my interest in image processing with software development. I developed a lossy image compression tool from scratch in C++, inspired by the techniques used in the JPEG standard. This involved implementing the discrete cosine transform, various encoding techniques, and creating a custom binary file format, which I named “.samuel,” to store the compressed data.
-Beyond the nice mathematical of image compression, this project also deepened my understanding of software development as it grew in complexity. I applied design patterns and set up automated unit testing using GitHub Actions and CMake.
+To make the most of my time between assignments, I took on this personal project that combined my interest in image processing with software development. I developed a lossy image compression tool from scratch in C++, inspired by the techniques used in the JPEG standard. This involved implementing the discrete cosine transform, various encoding techniques, and creating a custom binary file format, which I named ".samuel," to store the compressed data.
+Beyond the nice mathematics of image compression, this project also deepened my understanding of software development as it grew in complexity. I applied design patterns and set up automated unit testing using GitHub Actions and CMake.
 
-# Features
+## Examples
 
-- **Custom Compression Format**: Compress images into a custom ".samuel" file format.
-- **Domain Transformation**: Transform images to a new domain (e.g., Fourier domain) for efficient compression.
-- **Multiple Compression Levels**: Support for various compression levels to balance quality and file size.
-- **Unit Testing**: Comprehensive unit tests to ensure code reliability.
-- **OO Design**: Object-oriented design principles for maintainable and scalable code.
-- **Interface**: Command-line interface for easy interaction with the tool (WIP).
+Compress and Save an Image:
 
-# Goals
+```cpp
+ImageCompressionAPI api = ImageCompressionAPI::create(Method::DCT); // call static factory method
 
-- Practice C++ programming.
-- Implement object-oriented design.
-- Develop unit tests for code reliability.
-- Create a user-friendly interface.
+Image img = Image("C:/input/picture.tif");
 
+auto compressedImage = api.compress(img, CompressionLevel::HIGH);
+
+api.saveCompressed(*compressedImage, "camera.samuel", "C:/output/");
+```
+
+Load and decompress and view image:
+
+```cpp
+ImageCompressionAPI api = ImageCompressionAPI::create(Method::DCT); // call static factory method
+
+auto compressedImage = api.loadCompressed("camera.samuel", "C:/output/");
+
+Image reconImage = api.decompress(*compressedImage);
+
+reconImage.displayImage();
+```
+
+## Software Design
+
+### Design Patterns
+
+- **Strategy Pattern**: The ICompressionStrategy interface is the base class for the compression strategies. This makes the strategy pattern possible and makes it easy to add a new strategy without changing much of the code.
+
+- **Dependency Injection**: The ImageCompressionAPI class accepts compression strategies through its constructor.
+
+- **Factory Method**: For ease of use, I added a static factory method that takes an enum representing the compression strategy. This way, the user of the API class does not need to pass an instance of the concrete strategy classes.
+
+- **Composition**: Complex components are built by composing smaller, focused classes (e.g., DCTCompression uses DCTTransformationHandler, QuantizationTable, etc.)
+
+### Important Classes and Responsibilities
+
+- **ImageCompressionAPI**: The main entry point for users, providing a simple interface.
+- **ICompressionStrategy**: Defines the interface that all compression algorithms must adhere to.
+- **DCTCompression/DFTCompressor**: Concrete implementations of compression algorithms
+- **Image**: Wrapper class around the OpenCV Matrix representation of an image, with some extra functions.
+
+### Class Diagram:
+
+![Class Diagram](class_diagram.svg)
 # Compression Strategy
 ```
 
@@ -32,7 +64,7 @@ Beyond the nice mathematical of image compression, this project also deepened my
       └───────────────────────────────────────────────────────────────┘
                                  Decompression
 ```
-In very simple terms, lossy compression is based on the fact that we can transform an image into a new domain. In this domain, only a few data points have a significant value. This means that we can discard all other data points and still reconstruct the image to a reasonable level.
+In very simple terms, lossy compression is based on the fact that we can transform an image into a new domain. In this domain, only a few data points have significant values. This means that we can discard all other data points and still reconstruct the image to a reasonable level.
 
 The best-known of such transforms is the Fourier Transform (FT). The FT can deconstruct a signal into a weighted sum of sine and cosine functions. The weights are called the Fourier coefficients. Other transforms with similar properties include the cosine transform (also used in this project and JPEG) as well as wavelet transforms and many others.
 
@@ -50,12 +82,11 @@ Thereafter, I calculated the magnitude of each coefficient. Next, I set a percen
 
 This is nice, but we still have an image of the same size, just with a lot of zeros. So now we need to efficiently store the information. Here, I chose a {Column, Row, Value} format. For every nonzero element, we store its location and value (a complex value in the case of the FT).
 
-## Discret Cosine transform Compression
+## Discrete Cosine Transform Compression
 
 Secondly, I implemented the Discrete Cosine Transform (DCT) compression, a core component of the JPEG standard, and I implemented the DCT from scratch.
 
-The DCT is closely related to the Discrete Fourier Transform (DFT), but it uses only cosine functions as basis functions. this results in only real coefficients which simplifies the representation. Both the DCT and DFT can compact image infromation; however, the DCT’s exclusive use of cosine functions often results in a more concentrated infromation distribution in the low-frequency components for many natural images. 
-
+The DCT is closely related to the Discrete Fourier Transform (DFT), but it uses only cosine functions as basis functions. This results in only real coefficients which simplifies the representation. Both the DCT and DFT can compact image information; however, the DCT's exclusive use of cosine functions often results in a more concentrated information distribution in the low-frequency components for many natural images.
 
 ### Mathematics 
 
@@ -64,7 +95,6 @@ The **DCT**, is defined as follows, transforms an input signal $ x[n] $ of lengt
 $$
 X[k] = \sum_{n=0}^{N-1} x[n] \cdot  \alpha(k) \cos \left( \frac{\pi (2n + 1) k}{2N} \right)
 $$
-
 
 The normalization factor $ \alpha(k) $ is:
 
@@ -77,8 +107,6 @@ $$
 $$
 
 This equation tells us how to compute the frequency coefficients $ X[k] $ by taking a weighted sum of the input signal $ x[n] $, with each weight being a cosine function at the $ k^{th} $ frequency.
-
-
 
 In the code, the DCT operation is implemented using **matrix-vector multiplication**. This means that the DCT is represented as a matrix, where each element of the matrix corresponds to a **cosine basis function**. 
 
@@ -107,29 +135,29 @@ $$
 x = (\text{DCTMatrix})^{T} \times X
 $$
 
-### Implementation 
+### DCT Compression Implementation 
 
-The whole DCT compression has a view more steps then the DFT approach.
+The DCT compression has several more steps than the DFT approach:
 
 1. Cut image into 8x8 blocks
 2. DCT
-3. Perform quantisation
-4. ZigZagEndode the transforme image blocks
-5. Run lenght encoding
+3. Perform quantization
+4. ZigZag encode the transformed image blocks
+5. Run-length encoding
 
 #### 1. Cut image into 8x8 blocks
 
-As opposed to the to the DFT we will perfrom the DCT on blocks of the image instead of the image as a whole. So the first step is to cut the image up into the blocks, where the image may need to be zero-padded.
+Unlike the DFT, we perform the DCT on blocks of the image instead of the image as a whole. So the first step is to cut the image up into blocks, where the image may need to be zero-padded.
 
 #### 2. DCT
 
-Then we DCT each image block, were we use the fact that the DCT is sperable in it's dimentions so we can perform a 1D DCT on ech image row and the perform another 1D DCT column wise.
+Then we DCT each image block, where we use the fact that the DCT is separable in its dimensions so we can perform a 1D DCT on each image row and then perform another 1D DCT column-wise.
 
-#### 3. Perform quantisation
+#### 3. Perform quantization
 
-Here we also divert from the DFT approch where we just removed the smallest coeffcients. Here we devide the transformed 8x8 image block by a so called quantiation tabel. these tabels have been emoricle foud to have the least amout of negative perseptible effect on the compressed image.
+Here we also diverge from the DFT approach where we just removed the smallest coefficients. Here we divide the transformed 8x8 image block by a so-called quantization table. These tables have been empirically found to have the least amount of negative perceptible effect on the compressed image.
 
-Below we see an example of a quantisation tabel, as you can se in the upper right values are low and in the bottum left values are high. this is to remove more high frecuancy componets and leave the lower frecuancies allown.  
+Below we see an example of a quantization table. As you can see, in the upper right values are low and in the bottom left values are high. This is to remove more high-frequency components and leave the lower frequencies alone.  
 
 ```cpp
 const std::vector<std::vector<int>> QuantizationTable::highCompressionTable = {
@@ -143,9 +171,9 @@ const std::vector<std::vector<int>> QuantizationTable::highCompressionTable = {
     {36, 46, 48, 50, 56, 50, 52, 49}};
 ```
 
-#### 4. ZigZagEndode the transforme image blocks
+#### 4. ZigZag encode the transformed image blocks
 
-Now that we have our transformed an quantised image blocks we need to store them efficenly. to do this we want to order the coeffcents from high to low frequanecy. this means we travers the image blok in a zig zag pattern as shown in the snipit below
+Now that we have our transformed and quantized image blocks, we need to store them efficiently. To do this, we want to order the coefficients from high to low frequency. This means we traverse the image block in a zigzag pattern as shown in the snippet below:
 
 ```cpp
 imageBlock = {{1,  2,  6,   7},
@@ -156,24 +184,32 @@ imageBlock = {{1,  2,  6,   7},
 result = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
 ```
 
-#### 5. Run lenght encoding
+#### 5. Run-length encoding
 
-Now that we have orderd the image blocks in to 
+Now that we have orderd the image block such that zero value coefficents are clusterd neer the end we can effcently store this using runleght encoding. where a sequance of the same value are stored as a pair ```{value,runLenght}```.
 
 
-## Software Design 
+## Features
 
-I tried to structure the code using the strategy pattern where there are now two strategys DFT and DCT. 
+- **Custom Compression Format**: Compress images into a custom ".samuel" file format.
+- **Domain Transformation**: Transform images to a new domain (e.g., Fourier domain) for efficient compression.
+- **Multiple Compression Levels**: Support for various compression levels to balance quality and file size.
+- **Unit Testing**: Comprehensive unit tests to ensure code reliability.
+- **OO Design**: Object-oriented design principles for maintainable and scalable code.
+- **Interface**: Command-line interface for easy interaction with the tool (WIP).
 
-![Class Diagram](class_diagram.svg)
+## Goals
+
+- Practice C++ programming.
+- Implement object-oriented design.
+- Develop unit tests for code reliability.
+- Create a user-friendly interface.
 
 ## Dependencies
 
 - CMake 3.11 or higher
 - OpenCV
 - GoogleTest
-
-
 
 ## References
 
