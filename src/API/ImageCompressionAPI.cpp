@@ -1,21 +1,26 @@
 #include "ImageCompressionAPI.h"
 
-ImageCompressionAPI::ImageCompressionAPI(Method method)
+
+
+ImageCompressionAPI ImageCompressionAPI::create(Method method)
 {
-    switch (method)
-    {
-    case Method::DCT:
-        m_CompressionStrategy = std::make_unique<DCTCompression>();
-        m_DataStoreStrategy = std::make_unique<StoreDCTData>();
-        break;
-    case Method::DFT:
-        m_CompressionStrategy = std::make_unique<DFTCompressor>();
-        m_DataStoreStrategy = std::make_unique<StoringDFTData>();
-        break;
-    default:
-        throw std::invalid_argument("Invalid compression method");
+    switch (method) {
+        case Method::DCT:
+            return ImageCompressionAPI(std::make_unique<DCTCompression>(), 
+                                       std::make_unique<StoreDCTData>());
+        case Method::DFT:
+            return ImageCompressionAPI(std::make_unique<DFTCompressor>(), 
+                                       std::make_unique<StoringDFTData>());
+        default:
+            throw std::invalid_argument("Invalid compression method");
     }
 }
+
+ImageCompressionAPI::ImageCompressionAPI(std::unique_ptr<ICompressionStrategy> compressionStrategy, std::unique_ptr<BaseStoreData> dataStoreStrategy)
+    : m_CompressionStrategy(std::move(compressionStrategy))
+    , m_DataStoreStrategy(std::move(dataStoreStrategy))
+{}
+
 
 std::unique_ptr<BaseCompressedImageHolder> ImageCompressionAPI::compress(const Image &image, CompressionLevel level)
 {

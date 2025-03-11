@@ -1,28 +1,73 @@
 #include "Image.h"
-#include "API/ImageCompressionAPI.h"
+
+#include "DFT/DFTCompressor.h"
+#include "DFT/SparseRepresentation.h"
+#include "DFT/StoringData.h"
+
+#include "DCT/DCT.h"
+#include "DCT/ImageChopper.h"
+#include "DCT/DCTCompression.h"
+#include "DCT/DCTEncoding.h"
+#include "DCT/ZigzagDCTcoefficientsOrder.h"
+#include "DCT/DCTTransformationHandler.h"
+#include "DCT/DCTCompression.h"
+#include "DCT/StoreDCTData.h"
+
+#include "RunLengthEnoding.h"
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
 
 int main()
 {
-    ImageCompressionAPI api = ImageCompressionAPI(Method::DCT);
+
+    // Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
+
+    // DFTCompressor compressor = DFTCompressor();
+
+    // // img.displayImage();
+
+    // SparseRepresentation sparseRepr = compressor.compress(img, 50);
+
+    // StoringData storingData = StoringData();
+
+    // // std::cout<< "sparseRepr.getSize().first" << sparseRepr.getSize().first<<std::endl;
+    // storingData.SaveFile("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/", sparseRepr);
+
+    // auto sparseReprloaded = storingData.LoadFile("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
+
+    // // std::cout<< "sparseReprloaded.getSize().first" << sparseReprloaded.getSize().first<<std::endl;
+
+    // Image decompressedImage = compressor.decompress(sparseReprloaded);
+
+    // decompressedImage.displayImage();
+
+    ////////////////////////
+    //  DCT compression   //
+    ////////////////////////
+
+    DCTCompression dctCompression;
+
+    StoreDCTData storeDCTData = StoreDCTData();
 
     Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
+    img.displayImage();
 
-    auto compressedImage = api.compress(img, CompressionLevel::LOW);
+    auto img_vec = img.getImageAsVector();
 
-    api.saveCompressed(*compressedImage, "camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
+    CompressedDCTImageHolder compressedImage = dctCompression.DCTCompress(img_vec, QuantizationTable::ultraHighCompressionTable);
 
-    auto compressedImageHolderReadFormFile = api.loadCompressed("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
+    storeDCTData.writeToBinary("camera.samuelDCT", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/", compressedImage);
 
-    Image reconImage = api.decompress(*compressedImageHolderReadFormFile);
+    auto compressedImageHolderReadFormFile = storeDCTData.readFromBinary("camera.samuelDCT", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
 
-    float compressionRatio = compressedImageHolderReadFormFile->getCompressionRatio();
+    auto reconstructedImage = dctCompression.DCTDecompress(compressedImageHolderReadFormFile);
 
-    reconImage.displayImage("Reconstructed Image (compression ratio: " + std::to_string(compressionRatio) + ")" );
+    Image decompressedImg = Image(reconstructedImage);
 
-    
+    decompressedImg.scaleIntensity();
+
+    decompressedImg.displayImage("Reconstructed Image");
 
     return 0;
 }
