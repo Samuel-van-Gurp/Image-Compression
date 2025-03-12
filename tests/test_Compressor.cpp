@@ -1,4 +1,4 @@
-#include "DFT/DFTCompressor.h"
+#include "DFT/DFTCompression.h"
 #include "CompressionLevel.h"
 #include "Image.h"
 #include <gtest/gtest.h>
@@ -12,9 +12,9 @@ TEST(CompressorTest, CompressionRountTripNOCompression)
     cv::randu(RandomMatrix, 0.0, 255.0);
 
     Image randomImage = Image(RandomMatrix);
-    DFTCompressor compressor;
+    DFTCompression compressor;
 
-    std::unique_ptr<BaseCompressedImageHolder> SparceRep = compressor.compress(randomImage,CompressionLevel::VERY_HIGH);
+    std::unique_ptr<BaseCompressedImageHolder> SparceRep = compressor.compress(randomImage, CompressionLevel::VERY_HIGH);
     Image decompressedImage = compressor.decompress(*SparceRep);
 
     // Assert
