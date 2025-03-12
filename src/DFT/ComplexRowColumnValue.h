@@ -1,8 +1,6 @@
 #ifndef COMPLEX_ROW_COLUMN_VALUE_H
 #define COMPLEX_ROW_COLUMN_VALUE_H
 
-#include "BaseCompressedImageHolder.h"
-
 struct ComplexRowColumnValue
 {
     int m_row;
