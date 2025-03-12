@@ -214,3 +214,4 @@ Now that we have orderd the image block such that zero value coefficents are clu
 ## References
 
 - [JPEG Compression Video](https://www.youtube.com/watch?v=0me3guauqOU)
+
