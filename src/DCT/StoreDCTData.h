@@ -2,6 +2,7 @@
 #define STORE_DCT_DATA_H
 
 #include "CompressedDCTImageHolder.h"
+#include "BaseCompressedImageHolder.h" 
 #include "BaseStoreData.h"
 #include <string>
 #include <memory>
