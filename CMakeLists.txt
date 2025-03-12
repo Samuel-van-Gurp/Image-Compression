@@ -25,9 +25,9 @@ add_library(CompressionCalc STATIC
                               src/BaseCompressedImageHolder.h
                               src/CompressionLevel.h
 
-                              src/DFT/DFTCompressor.cpp
+                              src/DFT/DFTCompression.cpp
                               src/DFT/CompressedDFTImageHolder.cpp
-                              src/DFT/StoringData.cpp
+                              src/DFT/StoreDFTData.cpp
                               src/DFT/DFT.cpp
                               src/DFT/ComplexRowColumnValue.cpp
 
