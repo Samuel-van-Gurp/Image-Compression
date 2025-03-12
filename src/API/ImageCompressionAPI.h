@@ -5,8 +5,8 @@
 #include "CompressionLevel.h"
 
 #include "DCT/DCTCompression.h"
-#include "DFT/DFTCompressor.h"
-#include "DFT/StoringData.h"
+#include "DFT/DFTCompression.h"
+#include "DFT/StoreDFTData.h"
 #include "DCT/StoreDCTData.h"
 
 #include <memory>
