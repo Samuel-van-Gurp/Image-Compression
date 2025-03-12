@@ -15,9 +15,10 @@ cv::Mat DFT::computeDFT(const cv::Mat &img) const
 
 cv::Mat DFT::prepareComplex2channelMat(const cv::Mat &floatImage) const
 {
+    int NUMBER_OF_CHANNELS = 2;
     cv::Mat planes[] = {floatImage, cv::Mat::zeros(floatImage.size(), CV_32F)};
     cv::Mat complexImage;
-    cv::merge(planes, 2, complexImage);
+    cv::merge(planes, NUMBER_OF_CHANNELS, complexImage);
 
     return complexImage;
 }

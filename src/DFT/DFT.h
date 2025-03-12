@@ -2,7 +2,6 @@
 #define DFT_H
 
 #include "Image.h"
-#include "CompressedDFTImageHolder.h"
 #include <opencv2/opencv.hpp>
 
 class DFT
