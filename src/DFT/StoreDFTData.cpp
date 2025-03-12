@@ -1,14 +1,14 @@
-#include "StoringData.h"
+#include "StoreDFTData.h"
 #include "CompressedDFTImageHolder.h"
 #include "ComplexRowColumnValue.h"
 
-StoringDFTData::StoringDFTData()
+StoreDFTData::StoreDFTData()
 {
 }
 
-const std::string StoringDFTData::FILE_EXTENTION = ".samuel";
+const std::string StoreDFTData::FILE_EXTENTION = ".samuel"; // move to base
 
-void StoringDFTData::writeToBinary(const std::string &fileName, const std::string &filePath, const BaseCompressedImageHolder &sparceRep) 
+void StoreDFTData::writeToBinary(const std::string &fileName, const std::string &filePath, const BaseCompressedImageHolder &sparceRep)
 {
 
     hasSamuelExtensionErr(fileName);
@@ -22,7 +22,7 @@ void StoringDFTData::writeToBinary(const std::string &fileName, const std::strin
     }
 
     // cast to derived type
-    const auto &compressedImageHolder = dynamic_cast<const CompressedDFTImageHolder&>(sparceRep);
+    const auto &compressedImageHolder = dynamic_cast<const CompressedDFTImageHolder &>(sparceRep);
 
     writeOriginalImageSize(outFile, compressedImageHolder.getOriginalSizeImage());
 
@@ -31,7 +31,7 @@ void StoringDFTData::writeToBinary(const std::string &fileName, const std::strin
     outFile.close();
 }
 
-std::unique_ptr<BaseCompressedImageHolder> StoringDFTData::readFromBinary(const std::string &fileName, const std::string &filePath) 
+std::unique_ptr<BaseCompressedImageHolder> StoreDFTData::readFromBinary(const std::string &fileName, const std::string &filePath)
 {
     std::ifstream inFile(filePath + fileName, std::ios::binary);
 
@@ -71,7 +71,7 @@ std::unique_ptr<BaseCompressedImageHolder> StoringDFTData::readFromBinary(const 
     return std::make_unique<CompressedDFTImageHolder>(CompressedDFTImageHolder(SparceVec, sizeOriginalImage));
 }
 
-std::pair<int, int> StoringDFTData::readOriginalImageSize(std::ifstream &inFile) const
+std::pair<int, int> StoreDFTData::readOriginalImageSize(std::ifstream &inFile) const
 {
     int rows, cols;
     inFile.read(reinterpret_cast<char *>(&rows), sizeof(rows));
@@ -80,7 +80,7 @@ std::pair<int, int> StoringDFTData::readOriginalImageSize(std::ifstream &inFile)
     return std::make_pair(rows, cols);
 }
 
-void StoringDFTData::writeSparceRep(std::ofstream &outFile, const CompressedDFTImageHolder &sparceRep) const
+void StoreDFTData::writeSparceRep(std::ofstream &outFile, const CompressedDFTImageHolder &sparceRep) const
 {
 
     std::vector<ComplexRowColumnValue> SparceVec = sparceRep.getSparseElements();
@@ -101,30 +101,30 @@ void StoringDFTData::writeSparceRep(std::ofstream &outFile, const CompressedDFTI
     }
 }
 
-void StoringDFTData::writeSparseVectorLength(std::ofstream &outFile, const std::vector<ComplexRowColumnValue> &SparceVec) const
+void StoreDFTData::writeSparseVectorLength(std::ofstream &outFile, const std::vector<ComplexRowColumnValue> &SparceVec) const
 {
     size_t numRows = SparceVec.size();
     outFile.write(reinterpret_cast<char *>(&numRows), sizeof(numRows));
 }
 
-void StoringDFTData::writeOriginalImageSize(std::ofstream &outFile, const std::pair<int, int> &imageSize) const
+void StoreDFTData::writeOriginalImageSize(std::ofstream &outFile, const std::pair<int, int> &imageSize) const
 {
     outFile.write(reinterpret_cast<const char *>(&imageSize.first), sizeof(imageSize.first));
     outFile.write(reinterpret_cast<const char *>(&imageSize.second), sizeof(imageSize.second));
 }
 
-bool StoringDFTData::openFileForWriting(const std::string &fileName, const std::string &filePath, std::ofstream &outFile) const
+bool StoreDFTData::openFileForWriting(const std::string &fileName, const std::string &filePath, std::ofstream &outFile) const
 {
     outFile.open(filePath + fileName, std::ios::binary);
     return outFile.is_open(); // Return true if the file was successfully opened
 }
 
-void StoringDFTData::handleFileError() const
+void StoreDFTData::handleFileError() const
 {
     std::cerr << "Error opening file\n";
 }
 
-void StoringDFTData::hasSamuelExtensionErr(const std::string &fileName) const
+void StoreDFTData::hasSamuelExtensionErr(const std::string &fileName) const
 {
     if (fileName.size() < FILE_EXTENTION.size() ||
         fileName.substr(fileName.size() - FILE_EXTENTION.size()) != FILE_EXTENTION)

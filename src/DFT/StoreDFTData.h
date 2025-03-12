@@ -10,10 +10,10 @@
 #include <memory>
 #include <vector>
 
-class StoringDFTData : public BaseStoreData
+class StoreDFTData : public BaseStoreData
 {
 public:
-    StoringDFTData();
+    StoreDFTData();
     void writeToBinary(const std::string &fileName, const std::string &filePath, const BaseCompressedImageHolder &sparceRep) override;
     std::unique_ptr<BaseCompressedImageHolder> readFromBinary(const std::string &fileName, const std::string &filePath) override;
 
