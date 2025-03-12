@@ -19,7 +19,7 @@ auto compressedImage = api.compress(img, CompressionLevel::HIGH);
 api.saveCompressed(*compressedImage, "camera.samuel", "C:/output/");
 ```
 
-Load and decompress and view image:
+Load, decompress and view image:
 
 ```cpp
 ImageCompressionAPI api = ImageCompressionAPI::create(Method::DCT); // call static factory method
