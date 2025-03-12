@@ -9,7 +9,7 @@
 
 #include <opencv2/opencv.hpp>
 
-class DFTCompressor : public ICompressionStrategy
+class DFTCompression : public ICompressionStrategy
 {
 
 public:

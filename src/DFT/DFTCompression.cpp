@@ -1,6 +1,6 @@
-#include "DFTCompressor.h"
+#include "DFTCompression.h"
 
-std::unique_ptr<BaseCompressedImageHolder> DFTCompressor::compress(const Image &image, CompressionLevel compressionLevel) const
+std::unique_ptr<BaseCompressedImageHolder> DFTCompression::compress(const Image &image, CompressionLevel compressionLevel) const
 {
 
     float percentile = getCompressionPersentile(compressionLevel);
@@ -22,7 +22,7 @@ std::unique_ptr<BaseCompressedImageHolder> DFTCompressor::compress(const Image &
     return sparseRepr_ptr; // impisit conversion from unique_ptr<CompressedDFTImageHolder> to unique_ptr<unique_ptrBaseCompressedImageHolder>
 }
 
-Image DFTCompressor::decompress(BaseCompressedImageHolder &sparseRepr) const
+Image DFTCompression::decompress(BaseCompressedImageHolder &sparseRepr) const
 {
     DFT dft;
 
@@ -36,7 +36,7 @@ Image DFTCompressor::decompress(BaseCompressedImageHolder &sparseRepr) const
     return Image(decodedSparceCompresImage);
 }
 
-float DFTCompressor::getCompressionPersentile(CompressionLevel compressionLevel) const
+float DFTCompression::getCompressionPersentile(CompressionLevel compressionLevel) const
 {
     switch (compressionLevel)
     {
@@ -57,7 +57,7 @@ float DFTCompressor::getCompressionPersentile(CompressionLevel compressionLevel)
     }
 }
 
-float const DFTCompressor::ComputeIntensityThreshold(const cv::Mat &magnitude, float percentile) const
+float const DFTCompression::ComputeIntensityThreshold(const cv::Mat &magnitude, float percentile) const
 {
 
     const float PERCENTILE_SCALE = 100.0f;
@@ -75,7 +75,7 @@ float const DFTCompressor::ComputeIntensityThreshold(const cv::Mat &magnitude, f
     return threshold;
 }
 
-void DFTCompressor::validatePercentileRange(const float percentile) const
+void DFTCompression::validatePercentileRange(const float percentile) const
 {
     if (percentile < 0.0f || percentile > 100.0f)
     {
@@ -83,7 +83,7 @@ void DFTCompressor::validatePercentileRange(const float percentile) const
     }
 }
 
-cv::Mat DFTCompressor::MakeSubSamplingMask(const cv::Mat &magnitude, float threshold) const
+cv::Mat DFTCompression::MakeSubSamplingMask(const cv::Mat &magnitude, float threshold) const
 {
     cv::Mat mask = cv::Mat::zeros(magnitude.size(), CV_32F);
 
@@ -100,7 +100,7 @@ cv::Mat DFTCompressor::MakeSubSamplingMask(const cv::Mat &magnitude, float thres
     return mask;
 }
 
-cv::Mat DFTCompressor::applyMask(const cv::Mat &complexImage, const cv::Mat &mask) const
+cv::Mat DFTCompression::applyMask(const cv::Mat &complexImage, const cv::Mat &mask) const
 {
     cv::Mat planes[2];
     cv::split(complexImage, planes);
