@@ -2,6 +2,7 @@
 #define SPARSE_REPRESENTATIONS_H
 
 #include "ComplexRowColumnValue.h"
+#include "BaseCompressedImageHolder.h"
 #include <opencv2/core/core.hpp>
 #include <vector>
 
@@ -25,6 +26,7 @@ private:
     std::vector<ComplexRowColumnValue> m_sparseElements;
 
     std::pair<cv::Mat, cv::Mat> splitComplexImage(const cv::Mat &complexImage) const;
+    void populateMatricesFromSparseElements(cv::Mat &realMat, cv::Mat &imaginaryMat) const;
     cv::Mat mergeRealAndImaginary(const cv::Mat &real, const cv::Mat &imaginary) const;
     void fillRowColumnComplexValue(const cv::Mat &real, const cv::Mat &imagery);
     void setRowColumnValueElement(const cv::Mat &real, const cv::Mat &imagery, int rowIndex, int columnIndex);

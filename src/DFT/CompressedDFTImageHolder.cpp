@@ -24,7 +24,6 @@ void CompressedDFTImageHolder::fillRowColumnComplexValue(const cv::Mat &real, co
         {
             if (!isElementZero(real, imagery, rowIndex, columnIndex))
             {
-                // setRowColumnValueElement(real, imagery, rowIndex, columnIndex);
                 m_sparseElements.push_back(ComplexRowColumnValue(rowIndex, columnIndex, real.at<float>(rowIndex, columnIndex), imagery.at<float>(rowIndex, columnIndex)));
             }
         }
@@ -45,11 +44,8 @@ std::pair<cv::Mat, cv::Mat> CompressedDFTImageHolder::splitComplexImage(const cv
     ;
 }
 
-cv::Mat CompressedDFTImageHolder::convertToDenseComplexMatrix() const
+void CompressedDFTImageHolder::populateMatricesFromSparseElements(cv::Mat& realMat, cv::Mat& imaginaryMat) const
 {
-    cv::Mat reconstructedRealImage = cv::Mat::zeros(m_OriginalSizeImage.first, m_OriginalSizeImage.second, CV_32FC1);
-    cv::Mat reconstructedImageryImage = cv::Mat::zeros(m_OriginalSizeImage.first, m_OriginalSizeImage.second, CV_32FC1);
-
     for (const auto &element : m_sparseElements)
     {
         int rowIndex = element.m_row;
@@ -57,13 +53,22 @@ cv::Mat CompressedDFTImageHolder::convertToDenseComplexMatrix() const
         float realValue = element.m_real;
         float imageryValue = element.m_imag;
 
-        reconstructedRealImage.at<float>(rowIndex, columnIndex) = realValue;
-        reconstructedImageryImage.at<float>(rowIndex, columnIndex) = imageryValue;
+        realMat.at<float>(rowIndex, columnIndex) = realValue;
+        imaginaryMat.at<float>(rowIndex, columnIndex) = imageryValue;
     }
+}
+
+cv::Mat CompressedDFTImageHolder::convertToDenseComplexMatrix() const
+{
+    cv::Mat reconstructedRealImage = cv::Mat::zeros(m_OriginalSizeImage.first, m_OriginalSizeImage.second, CV_32FC1);
+    cv::Mat reconstructedImageryImage = cv::Mat::zeros(m_OriginalSizeImage.first, m_OriginalSizeImage.second, CV_32FC1);
+
+    populateMatricesFromSparseElements(reconstructedRealImage, reconstructedImageryImage);
 
     cv::Mat complexImage = mergeRealAndImaginary(reconstructedRealImage, reconstructedImageryImage);
     return complexImage;
 }
+
 
 std::vector<ComplexRowColumnValue> CompressedDFTImageHolder::getSparseElements() const
 {
