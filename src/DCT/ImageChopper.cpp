@@ -1,25 +1,36 @@
 #include "ImageChopper.h"
-
-#include "ImageChopper.h"
 #include <algorithm>
 
 std::vector<std::vector<std::vector<float>>> ImageChopper::chopImage(const std::vector<std::vector<float>> &image, int chopSize) const
-{
-    std::vector<std::vector<float>> paddedImage = padImage(image, chopSize);
-    int paddedImageHeight = static_cast<int>(paddedImage.size());
-    int paddedImageWidth = static_cast<int>(paddedImage[0].size());
+{   
+    std::vector<std::vector<float>> processedImage = image;
+    
+    if (!areSidesMultipleOfBlockSize(static_cast<int>(image.size()), static_cast<int>(image[0].size()), chopSize))
+    {
+
+        processedImage = padImage(image, chopSize); // create padded image
+
+    }
+
+    int ImageHeight = static_cast<int>(processedImage.size());
+    int ImageWidth = static_cast<int>(processedImage[0].size());
 
     std::vector<std::vector<std::vector<float>>> chops;
 
-    for (int row = 0; row < paddedImageHeight; row += chopSize)
+    for (int row = 0; row < ImageHeight; row += chopSize)
     {
-        for (int col = 0; col < paddedImageWidth; col += chopSize)
+        for (int col = 0; col < ImageWidth; col += chopSize)
         {
-            chops.push_back(extractImageBlock(paddedImage, row, col, chopSize));
+            chops.push_back(extractImageBlock(processedImage, row, col, chopSize));
         }
     }
-
     return chops;
+}
+
+bool ImageChopper::areSidesMultipleOfBlockSize(const int height, const int width,const int chopSize) const 
+{
+    return height % chopSize == 0 && width % chopSize == 0;
+    
 }
 
 std::vector<std::vector<float>> ImageChopper::reconstructImage(const std::vector<std::vector<std::vector<float>>> &choppedImage, int originalHeight, int originalWidth) const
@@ -32,7 +43,10 @@ std::vector<std::vector<float>> ImageChopper::reconstructImage(const std::vector
     {
         for (int col = 0; col < originalWidth; col += chopSize)
         {
-            insertImageBlock(reconstructedImage, choppedImage[index++], row, col);
+            if (index < choppedImage.size()) {
+                insertImageBlock(reconstructedImage, choppedImage[index], row, col);
+            }
+            index++;
         }
     }
 
@@ -58,6 +72,7 @@ std::vector<std::vector<float>> ImageChopper::padImage(const std::vector<std::ve
 
 std::vector<std::vector<float>> ImageChopper::extractImageBlock(const std::vector<std::vector<float>> &image, int row, int col, int chopSize) const
 {
+
     std::vector<std::vector<float>> block(chopSize, std::vector<float>(chopSize, 0));
 
     for (int i = 0; i < chopSize; ++i)
@@ -71,14 +86,31 @@ std::vector<std::vector<float>> ImageChopper::extractImageBlock(const std::vecto
     return block;
 }
 
+// void ImageChopper::insertImageBlock(std::vector<std::vector<float>> &image, const std::vector<std::vector<float>> &block, int row, int col) const
+// {
+//     int chopSize = static_cast<int>(block.size());
+
+//     for (int i = 0; i < chopSize; ++i)
+//     {
+//         for (int j = 0; j < chopSize; ++j)
+//         {
+//             image[row + i][col + j] = block[i][j];
+//         }
+//     }
+// }
 void ImageChopper::insertImageBlock(std::vector<std::vector<float>> &image, const std::vector<std::vector<float>> &block, int row, int col) const
 {
     int chopSize = static_cast<int>(block.size());
+    int maxRow = static_cast<int>(image.size());
+    int maxCol = maxRow > 0 ? static_cast<int>(image[0].size()) : 0;
 
     for (int i = 0; i < chopSize; ++i)
     {
+        if (row + i >= maxRow) break; // Stop if we reach the end of the image
+        
         for (int j = 0; j < chopSize; ++j)
         {
+            if (col + j >= maxCol) break; // Stop if we reach the end of the row
             image[row + i][col + j] = block[i][j];
         }
     }
