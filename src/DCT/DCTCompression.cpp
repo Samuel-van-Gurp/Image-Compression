@@ -15,7 +15,6 @@ std::unique_ptr<BaseCompressedImageHolder> DCTCompression::compress(const Image 
         throw std::invalid_argument("Image is empty");
     }
 
-
     auto tranformedImage = dctTransformationHandler.DCTTransformImage(imageVector, compressionLevel);
 
     std::vector<std::vector<std::pair<float, int>>> encodedImage = dctEncoding.encodeImageBlocks(tranformedImage);
@@ -30,10 +29,10 @@ std::unique_ptr<BaseCompressedImageHolder> DCTCompression::compress(const Image 
     return compressedImageHolder;
 }
 
-Image DCTCompression::decompress(BaseCompressedImageHolder& compressedData) const
+Image DCTCompression::decompress(BaseCompressedImageHolder &compressedData) const
 {
     // cast to derived type
-    const auto &compressedImageHolder = dynamic_cast<const CompressedDCTImageHolder&>(compressedData);
+    const auto &compressedImageHolder = dynamic_cast<const CompressedDCTImageHolder &>(compressedData);
 
     DCTTransformationHandler dctTransformationHandler(compressedImageHolder.BLOCK_SIZE);
 
@@ -43,7 +42,7 @@ Image DCTCompression::decompress(BaseCompressedImageHolder& compressedData) cons
 
     auto decoded = dctEncoding.decodeImageBlocks(compressedImageHolder.compressedImage);
 
-    auto ReconstructedImage = dctTransformationHandler.inverseDCTTransformImage(decoded,compressedImageHolder.quantizationTable,
+    auto ReconstructedImage = dctTransformationHandler.inverseDCTTransformImage(decoded, compressedImageHolder.quantizationTable,
                                                                                 compressedImageHolder.OriginalImageDimensions.first,
                                                                                 compressedImageHolder.OriginalImageDimensions.second);
 

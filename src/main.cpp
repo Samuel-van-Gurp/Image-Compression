@@ -6,13 +6,15 @@ int main()
 
     ImageCompressionAPI api = ImageCompressionAPI::create(Method::DCT);
 
-    Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
 
-    auto compressedImage = api.compress(img, CompressionLevel::LOW);
+    Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/ALTEN.jpg");
+    // img.displayImage();
 
-    api.saveCompressed(*compressedImage, "camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
+    auto compressedImage = api.compress(img, CompressionLevel::VERY_HIGH);
 
-    auto compressedImageHolderReadFormFile = api.loadCompressed("camera.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
+    api.saveCompressed(*compressedImage, "ALTEN.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
+
+    auto compressedImageHolderReadFormFile = api.loadCompressed("ALTEN.samuel", "C:/Users/svangurp/Desktop/projects/ImageCompression/images/imgOUT/");
 
     Image reconImage = api.decompress(*compressedImageHolderReadFormFile);
 

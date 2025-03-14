@@ -76,6 +76,7 @@ add_executable(MyTests
     tests/test_ImageChopper.cpp
     tests/test_DCTTransformationHandler.cpp
     tests/test_RunLengthEnoding.cpp
+    tests/test_ImageCompressionAPI.cpp
 )
 
 # Link GoogleTest and OpenCV to the test executable
