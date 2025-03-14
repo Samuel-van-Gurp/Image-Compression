@@ -47,19 +47,21 @@ cv::Mat convertToMat(const std::vector<std::vector<float>> &data, int rows, int 
 }
 
 TEST(DCTCompressionTest, CompressDecompress)
-{
+{   
+    int IMAGE_BLOCK_SIZE = 8;
+
     // Create a random image
-    cv::Mat inputImage = createRandomImage(256, 256);
+    cv::Mat inputImage = createRandomImage(1554, 1036);
     ASSERT_FALSE(inputImage.empty());
 
     // Convert cv::Mat to std::vector<std::vector<float>>
     std::vector<std::vector<float>> inputVector = convertToVector(inputImage);
 
     // Create an instance of DCTCompression
-    DCTTransformationHandler transformHandler(8);
+    DCTTransformationHandler transformHandler(IMAGE_BLOCK_SIZE);
 
     // Compress the image
-    std::vector<std::vector<std::vector<float>>> compressedData = transformHandler.DCTTransformImage(inputVector, CompressionLevel::MEDIUM, 8);
+    std::vector<std::vector<std::vector<float>>> compressedData = transformHandler.DCTTransformImage(inputVector, CompressionLevel::MEDIUM, IMAGE_BLOCK_SIZE);
     ASSERT_FALSE(compressedData.empty());
 
     // Decompress the image
