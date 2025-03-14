@@ -1,7 +1,7 @@
 #include "ImageCompressionAPI.h"
 
 ImageCompressionAPI ImageCompressionAPI::create(Method method)
-{
+{// this factory method creates dependencies to the concrete classes, however it keeps the API clean and is more simple than a factory class
     switch (method)
     {
     case Method::DCT:

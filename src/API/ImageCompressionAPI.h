@@ -20,20 +20,20 @@ enum class Method
 class ImageCompressionAPI
 {
 public:
-    std::unique_ptr<ICompressionStrategy> m_CompressionStrategy;
-    std::unique_ptr<BaseStoreData> m_DataStoreStrategy;
-
     static ImageCompressionAPI create(Method method); 
     
     ImageCompressionAPI(std::unique_ptr<ICompressionStrategy> compressionStrategy,
                         std::unique_ptr<BaseStoreData> dataStoreStrategy);
 
-    std::unique_ptr<BaseCompressedImageHolder> compress(const Image &image,
-                                                        CompressionLevel level = CompressionLevel::HIGH);
+    std::unique_ptr<BaseCompressedImageHolder> compress(const Image &image,CompressionLevel level = CompressionLevel::HIGH);
 
     Image decompress(BaseCompressedImageHolder &compressedData);
 
     void saveCompressed(const BaseCompressedImageHolder &compressedData, const std::string &fileName, const std::string &filePath);
 
     std::unique_ptr<BaseCompressedImageHolder> loadCompressed(const std::string &fileName, const std::string &filePath);
+
+private:
+    std::unique_ptr<ICompressionStrategy> m_CompressionStrategy;
+    std::unique_ptr<BaseStoreData> m_DataStoreStrategy;
 };
