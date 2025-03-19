@@ -6,9 +6,11 @@
 #include "ImageChopper.h"
 #include "DCT.h"
 #include "TwoDimDCT.h"
-#include <opencv2/opencv.hpp>
+#include <future>
+#include <thread>
 #include <vector>
 #include <functional>
+#include <iostream>
 
 class DCTTransformationHandler
 {

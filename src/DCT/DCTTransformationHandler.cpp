@@ -9,22 +9,13 @@ DCTTransformationHandler::DCTTransformationHandler(const int ImageBlocksize)
 std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::DCTTransformImage(const std::vector<std::vector<float>> &image, const CompressionLevel &compressionLevel, int CHUNK_SIZE) const
 {
     ImageChopper imageChopper;
-    
+
+
     auto quantizationTable = QuantizationTable::getQuantizationTable(compressionLevel);
 
     auto imageChunks = imageChopper.chopImage(image, CHUNK_SIZE);
 
-    // throw chunks are not 8x8
-    if (imageChunks[0].size() != CHUNK_SIZE || imageChunks[0][0].size() != CHUNK_SIZE)
-    {
-        throw std::invalid_argument("Chunks are not 8x8");
-    }
     auto DCTImageChunks = ApplyDCTToImagechunks(imageChunks);
-
-    if (DCTImageChunks[0].size() != CHUNK_SIZE || DCTImageChunks[0][0].size() != CHUNK_SIZE)
-    {
-        throw std::invalid_argument("Chunks are not 8x8");
-    }
 
     auto QuantisedDCTImageChunks = QuantizeImageChunks(DCTImageChunks,quantizationTable , divide);
     
@@ -100,15 +91,36 @@ std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::ApplyInve
 
 std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::ApplyDCTToImagechunks(const std::vector<std::vector<std::vector<float>>> &imageChunks) const
 {
-    std::vector<std::vector<std::vector<float>>> DCTImageChunks;
-
-    for (auto const &chunk : imageChunks)
-    {
-        auto DCTImageChunk = m_TwoDimDCT.computeTwoDimDCT(chunk);
-
-        DCTImageChunks.push_back(DCTImageChunk);
-
+    std::vector<std::vector<std::vector<float>>> DCTImageChunks(imageChunks.size());
+    
+    size_t numChunks = imageChunks.size();
+    size_t maxThreads = std::thread::hardware_concurrency();
+    
+    // Use a thread pool with a fixed number of worker threads
+    std::vector<std::future<void>> futures;
+    futures.reserve(maxThreads);
+    
+    // Process chunks in batches
+    size_t chunkIndex = 0;
+    
+    while (chunkIndex < numChunks) {
+        // Fill the thread pool up to maxThreads
+        size_t threadsToLaunch = std::min(maxThreads, numChunks - chunkIndex);
+        
+        // Launch up to maxThreads tasks
+        for (size_t t = 0; t < threadsToLaunch; t++) {
+            size_t i = chunkIndex++;
+            futures.push_back(std::async(std::launch::async, [this, &imageChunks, &DCTImageChunks, i]() {
+                DCTImageChunks[i] = m_TwoDimDCT.computeTwoDimDCT(imageChunks[i]);
+            }));
+        }
+        
+        // Wait for all threads in this batch to finish
+        for (auto& future : futures) {
+            future.wait();
+        }
+        futures.clear();
     }
-
+    
     return DCTImageChunks;
 }
