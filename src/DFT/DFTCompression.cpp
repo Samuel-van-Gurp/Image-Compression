@@ -43,15 +43,15 @@ float DFTCompression::getCompressionPersentile(CompressionLevel compressionLevel
     case CompressionLevel::NONE:
         return 100.0f;
     case CompressionLevel::LOW:
-        return 50.0f;
+        return 75.0f;
     case CompressionLevel::MEDIUM:
-        return 10.0f;
+        return 50.0f;
     case CompressionLevel::HIGH:
-        return 1.0f;
+        return 37.5f;
     case CompressionLevel::VERY_HIGH:
-        return 0.1f;
+        return 25.0f;
     case CompressionLevel::ULTRA_HIGH:
-        return 0.01f;
+        return 12.5f;
     default:
         return 100.0f;
     }
