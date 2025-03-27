@@ -45,7 +45,7 @@ std::vector<float> DCT::multiplyMatrixVector(
     const std::vector<float> &signal) const
 {
     size_t numRows = matrix.size();
-    std::vector<float> result(numRows, 0.0f);
+    std::vector<float> result(numRows);
 
     for (size_t i = 0; i < numRows; ++i)
     {

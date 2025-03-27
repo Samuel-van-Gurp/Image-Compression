@@ -21,7 +21,6 @@ private:
     std::vector<std::vector<float>> m_DCTMatrix;
     std::vector<std::vector<float>> m_inverseDCTMatrix;
 
-    void inplaceTranspose(std::vector<std::vector<float>> &DCTMatrix) const;
     std::vector<std::vector<float>> computeDCTMatrix(int signalLength) const;
     double computeDCTMatrixElement(const int row_index, const int column_index, const int signalLength) const;
     std::vector<std::vector<float>> transpose(const std::vector<std::vector<float>> &DCTMatrix) const;
