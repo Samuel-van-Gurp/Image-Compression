@@ -9,6 +9,7 @@ int main()
 
 
     Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/ALTEN.jpg");
+    // Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/camera.tif");
     // img.displayImage();
     auto start = std::chrono::high_resolution_clock::now();
     auto compressedImage = api.compress(img, CompressionLevel::ULTRA_HIGH);
