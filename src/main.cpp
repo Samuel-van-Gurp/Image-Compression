@@ -11,7 +11,7 @@ int main()
     Image img = Image("C:/Users/svangurp/Desktop/projects/ImageCompression/images/GrayscaleTestImg/ALTEN.jpg");
     // img.displayImage();
     auto start = std::chrono::high_resolution_clock::now();
-    auto compressedImage = api.compress(img, CompressionLevel::VERY_HIGH);
+    auto compressedImage = api.compress(img, CompressionLevel::ULTRA_HIGH);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration = end - start;
 
