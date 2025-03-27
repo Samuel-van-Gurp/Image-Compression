@@ -6,14 +6,14 @@ DCTTransformationHandler::DCTTransformationHandler(const int ImageBlocksize)
 {
 }
 
-std::vector<std::vector<float>> DCTTransformationHandler::Forwardblock(const std::vector<std::vector<float>>& imageBlock, const std::vector<std::vector<int>> quantizationTable)
+std::vector<std::vector<float>> DCTTransformationHandler::Forwardblock(const std::vector<std::vector<float>>& imageBlock, const std::vector<std::vector<int>> quantizationTable) const
 {
     auto dctBlock = m_TwoDimDCT.computeTwoDimDCT(imageBlock);
         
     return QuantizeChunk(dctBlock, quantizationTable, divide);       
 }
 
-std::vector<std::vector<float>> DCTTransformationHandler::InverseBlock(const std::vector<std::vector<float>>& dctBlock, const std::vector<std::vector<int>> quantizationTable)
+std::vector<std::vector<float>> DCTTransformationHandler::InverseBlock(const std::vector<std::vector<float>>& dctBlock, const std::vector<std::vector<int>> quantizationTable) const
 {
     auto dequantizedBlock = QuantizeChunk(dctBlock, quantizationTable, multiply);
         

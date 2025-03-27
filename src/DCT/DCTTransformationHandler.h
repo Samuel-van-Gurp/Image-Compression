@@ -27,9 +27,9 @@ public:
                                                              const CompressionLevel &compressionLevel,
                                                              const int originalHeight,
                                                              const int originalWidth) const;
-    std::vector<std::vector<float>> Forwardblock(const std::vector<std::vector<float>> &imageBlock, const std::vector<std::vector<int>> quantizationTable);
+    std::vector<std::vector<float>> Forwardblock(const std::vector<std::vector<float>> &imageBlock, const std::vector<std::vector<int>> quantizationTable) const;
 
-    std::vector<std::vector<float>> InverseBlock(const std::vector<std::vector<float>> &dctBlock, const std::vector<std::vector<int>> quantizationTable);
+    std::vector<std::vector<float>> InverseBlock(const std::vector<std::vector<float>> &dctBlock, const std::vector<std::vector<int>> quantizationTable) const;
 
 private:
     TwoDimDCT m_TwoDimDCT;
