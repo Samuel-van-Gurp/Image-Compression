@@ -27,6 +27,9 @@ public:
                                                              const CompressionLevel &compressionLevel,
                                                              const int originalHeight,
                                                              const int originalWidth) const;
+    std::vector<std::vector<float>> Forwardblock(const std::vector<std::vector<float>> &imageBlock, const std::vector<std::vector<int>> quantizationTable);
+
+    std::vector<std::vector<float>> InverseBlock(const std::vector<std::vector<float>> &dctBlock, const std::vector<std::vector<int>> quantizationTable);
 
 private:
     TwoDimDCT m_TwoDimDCT;
@@ -37,6 +40,8 @@ private:
     std::vector<std::vector<std::vector<float>>> QuantizeImageChunks(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
                                                                      const std::vector<std::vector<int>> &quantizationTable,
                                                                      std::function<float(float, int)> devideOrMultiply) const;
+
+    std::vector<std::vector<float>> QuantizeChunk(const std::vector<std::vector<float>> &chunk, const std::vector<std::vector<int>> &quantizationTable, std::function<float(float, int)> devideOrMultiply) const;
 
     static std::function<float(float, int)> divide;
     static std::function<float(float, int)> multiply;
