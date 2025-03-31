@@ -6,14 +6,14 @@ DCTTransformationHandler::DCTTransformationHandler(const int ImageBlocksize)
 {
 }
 
-std::vector<std::vector<float>> DCTTransformationHandler::Forwardblock(const std::vector<std::vector<float>>& imageBlock, const std::vector<std::vector<int>> quantizationTable) const
+std::vector<std::vector<float>> DCTTransformationHandler::Forwardblock(const std::vector<std::vector<float>>& imageBlock, const std::vector<std::vector<int>>& quantizationTable) const
 {
     auto dctBlock = m_TwoDimDCT.computeTwoDimDCT(imageBlock);
         
     return QuantizeChunk(dctBlock, quantizationTable, divide);       
 }
 
-std::vector<std::vector<float>> DCTTransformationHandler::InverseBlock(const std::vector<std::vector<float>>& dctBlock, const std::vector<std::vector<int>> quantizationTable) const
+std::vector<std::vector<float>> DCTTransformationHandler::InverseBlock(const std::vector<std::vector<float>>& dctBlock, const std::vector<std::vector<int>>& quantizationTable) const
 {
     auto dequantizedBlock = QuantizeChunk(dctBlock, quantizationTable, multiply);
         
@@ -33,7 +33,7 @@ std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::DCTTransf
 
         auto dctBlock = m_TwoDimDCT.computeTwoDimDCT(imageChunks[i]);
         
-        result[i] = QuantizeChunk(dctBlock, quantizationTable, divide);        
+        result.emplace_back(QuantizeChunk(dctBlock, quantizationTable, divide));
     }
     
     return result;
@@ -58,7 +58,7 @@ std::vector<std::vector<float>> DCTTransformationHandler::inverseDCTTransformIma
     return result;
 }
 
-std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::QuantizeImageChunks(std::vector<std::vector<std::vector<float>>> &DCTImageChunks,
+std::vector<std::vector<std::vector<float>>> DCTTransformationHandler::QuantizeImageChunks(const std::vector<std::vector<std::vector<float>>> &DCTImageChunks,
                                                                                            const std::vector<std::vector<int>> &quantizationTable,
                                                                                            std::function<float(float, int)> devideOrMultiply) const
 {
