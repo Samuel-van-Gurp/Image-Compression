@@ -19,7 +19,7 @@ auto compressedImage = api.compress(img, CompressionLevel::HIGH);
 api.saveCompressed(*compressedImage, "camera.samuel", "C:/output/");
 ```
 
-Load, decompress and view image:
+Load and decompress and view image:
 
 ```cpp
 ImageCompressionAPI api = ImageCompressionAPI::create(Method::DCT); // call static factory method
@@ -54,7 +54,6 @@ reconImage.displayImage();
 
 ![Class Diagram](class_diagram.svg)
 # Compression Strategy
-```
 
 ┌─────────────┐     ┌──────────────────────┐     ┌─────────┐    ┌────────────┐
 │ Input Image │ --> │ Transformer/compress │ --> │ Encoder │ -->| Compressed │
@@ -63,7 +62,7 @@ reconImage.displayImage();
       |                                                               |                   
       └───────────────────────────────────────────────────────────────┘
                                  Decompression
-```
+
 In very simple terms, lossy compression is based on the fact that we can transform an image into a new domain. In this domain, only a few data points have significant values. This means that we can discard all other data points and still reconstruct the image to a reasonable level.
 
 The best-known of such transforms is the Fourier Transform (FT). The FT can deconstruct a signal into a weighted sum of sine and cosine functions. The weights are called the Fourier coefficients. Other transforms with similar properties include the cosine transform (also used in this project and JPEG) as well as wavelet transforms and many others.
@@ -186,8 +185,7 @@ result = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
 
 #### 5. Run-length encoding
 
-Now that we have orderd the image block such that zero value coefficents are clusterd neer the end we can effcently store this using runleght encoding. where a sequance of the same value are stored as a pair ```{value,runLenght}```.
-
+Now that we have ordered the image blocks such that zero-value coefficients are clustered near the end, we can efficiently store this using run-length encoding, where a sequence of the same value is stored as a pair `{value, runLength}`.
 
 ## Features
 
@@ -214,4 +212,3 @@ Now that we have orderd the image block such that zero value coefficents are clu
 ## References
 
 - [JPEG Compression Video](https://www.youtube.com/watch?v=0me3guauqOU)
-
