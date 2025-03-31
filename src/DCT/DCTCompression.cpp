@@ -11,61 +11,24 @@ std::vector<std::pair<float, int>> DCTCompression::processImageBlock(
 {
 
     std::vector<std::vector<float>> quantizedBlock = m_dctTransformationHandler.Forwardblock(imageBlock, quantizationTable);
-    auto zigzaggedBlock = m_zigzagDCTcoefficientsOrder.ZigzagOrder(quantizedBlock);
-    return m_runlengthEnoding.RunLengthEncode(zigzaggedBlock);
+    auto zigzaggedBlock = m_zigzagDCTcoefficientsOrder.ZigzagOrder(std::move(quantizedBlock));
+    return m_runlengthEnoding.RunLengthEncode(std::move(zigzaggedBlock));
 }
 
 std::vector<std::vector<std::pair<float, int>>> DCTCompression::processImageBlocks(
     const std::vector<std::vector<std::vector<float>>> &imageChunks,
     const std::vector<std::vector<int>> &quantizationTable) const
 {
-    size_t numThreads =std::max(std::thread::hardware_concurrency(), 1u);
-    size_t totalChunks = imageChunks.size();
-    size_t batchSize = (totalChunks + numThreads - 1) / numThreads;
-    
-    std::vector<std::vector<std::pair<float, int>>> encodedImage(totalChunks);
-    std::vector<std::thread> threads;
-    for (size_t t = 0; t < numThreads; ++t)
+
+    std::vector<std::vector<std::pair<float, int>>> encodedImage(imageChunks.size());
+
+    for (size_t i = 0; i < imageChunks.size(); ++i)
     {
-        size_t start = t * batchSize;
-        size_t end = std::min(start + batchSize, totalChunks);
-
-        if (start >= totalChunks)
-            break;
-
-        threads.emplace_back([&, start, end, t]()
-        {
-            for (size_t i = start; i < end; ++i)
-            {
-                encodedImage[i] = processImageBlock(imageChunks[i], quantizationTable);
-               
-            }
-        });
-    }
-
-    for (auto &th : threads)
-    {
-        th.join();
+        encodedImage[i] = processImageBlock(imageChunks[i], quantizationTable);
     }
 
     return encodedImage;
 }
-
-
-// std::vector<std::vector<std::pair<float, int>>> DCTCompression::processImageBlocks(
-//     const std::vector<std::vector<std::vector<float>>> &imageChunks,
-//     const std::vector<std::vector<int>> &quantizationTable) const
-// {
-
-//     std::vector<std::vector<std::pair<float, int>>> encodedImage(imageChunks.size());
-
-//     for (size_t i = 0; i < imageChunks.size(); ++i)
-//     {
-//         encodedImage[i] = processImageBlock(imageChunks[i], quantizationTable);
-//     }
-
-//     return encodedImage;
-// }
 
 std::unique_ptr<BaseCompressedImageHolder> DCTCompression::compress(const Image &image, const CompressionLevel compressionLevel) const
 {
@@ -73,12 +36,9 @@ std::unique_ptr<BaseCompressedImageHolder> DCTCompression::compress(const Image 
     const std::vector<std::vector<int>> quantizationTable = QuantizationTable::getQuantizationTable(compressionLevel);
     const std::vector<std::vector<float>> imageVector = image.getImageAsVector();
     auto imageChunks = m_imageChopper.chopImage(imageVector, CHUNK_SIZE);
- 
+
     // execute
-    auto start_time = std::chrono::high_resolution_clock::now();
     auto encodedImage = processImageBlocks(imageChunks, quantizationTable);
-    auto end_time = std::chrono::high_resolution_clock::now();
-    std::cout << "Execution Time: " << std::chrono::duration<double>(end_time - start_time).count()<< " seconds" << std::endl;
     return createCompressedImageHolder(encodedImage, quantizationTable, imageVector, CHUNK_SIZE);
 }
 
@@ -90,8 +50,8 @@ std::unique_ptr<BaseCompressedImageHolder> DCTCompression::createCompressedImage
 {
 
     auto compressedImageHolder = std::make_unique<CompressedDCTImageHolder>();
-    compressedImageHolder->quantizationTable = quantizationTable;
-    compressedImageHolder->compressedImage = encodedImage;
+    compressedImageHolder->quantizationTable = std::move(quantizationTable);
+    compressedImageHolder->compressedImage = std::move(encodedImage);
     compressedImageHolder->OriginalImageDimensions = {static_cast<int>(imageVector.size()), static_cast<int>(imageVector[0].size())};
     compressedImageHolder->BLOCK_SIZE = chunkSize;
 
@@ -117,10 +77,10 @@ Image DCTCompression::decompress(BaseCompressedImageHolder &compressedData) cons
             compressedImageHolder.compressedImage[i]);
 
         auto dequantizedBlock = m_zigzagDCTcoefficientsOrder.ReverseZigzagtraversal(
-            runLengthDecoded);
+            std::move(runLengthDecoded));
 
         decodedBlocks[i] = m_dctTransformationHandler.InverseBlock(
-            dequantizedBlock, quantizationTable);
+            std::move(dequantizedBlock), quantizationTable);
     }
 
     auto reconstructedImage = m_imageChopper.reconstructImage(

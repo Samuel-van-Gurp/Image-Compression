@@ -20,7 +20,7 @@ public:
     DCTCompression();
 
     std::unique_ptr<BaseCompressedImageHolder> compress(const Image &image, const CompressionLevel compressionLevel) const override;
-    Image decompress(BaseCompressedImageHolder &compressedImageHolder) const;
+    Image decompress(BaseCompressedImageHolder &compressedImageHolder) const override;
 
 private:
     const int CHUNK_SIZE;
