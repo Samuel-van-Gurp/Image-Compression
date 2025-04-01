@@ -1,50 +1,90 @@
 #include "DCTCompression.h"
 
-std::unique_ptr<BaseCompressedImageHolder> DCTCompression::compress(const Image &image, CompressionLevel compressionLevel) const
+DCTCompression::DCTCompression()
+    : CHUNK_SIZE(8), m_imageChopper(), m_dctTransformationHandler(CHUNK_SIZE), m_runlengthEnoding(), m_zigzagDCTcoefficientsOrder()
 {
-    const int CHUNK_SIZE = 8;
-    DCTTransformationHandler dctTransformationHandler(CHUNK_SIZE);
-    RunLengthEnoding runLengthEncoding;
-    ZigzagDCTcoefficientsOrder zigzagOrder;
-    DCTEncoding dctEncoding(runLengthEncoding, zigzagOrder);
+}
 
-    auto imageVector = image.getImageAsVector();
+std::vector<std::pair<float, int>> DCTCompression::processImageBlock(
+    const std::vector<std::vector<float>> &imageBlock,
+    const std::vector<std::vector<int>> &quantizationTable) const
+{
 
-    if (imageVector.empty())
+    std::vector<std::vector<float>> quantizedBlock = m_dctTransformationHandler.Forwardblock(imageBlock, quantizationTable);
+    auto zigzaggedBlock = m_zigzagDCTcoefficientsOrder.ZigzagOrder(std::move(quantizedBlock));
+    return m_runlengthEnoding.RunLengthEncode(std::move(zigzaggedBlock));
+}
+
+std::vector<std::vector<std::pair<float, int>>> DCTCompression::processImageBlocks(
+    const std::vector<std::vector<std::vector<float>>> &imageChunks,
+    const std::vector<std::vector<int>> &quantizationTable) const
+{
+
+    std::vector<std::vector<std::pair<float, int>>> encodedImage(imageChunks.size());
+
+    for (size_t i = 0; i < imageChunks.size(); ++i)
     {
-        throw std::invalid_argument("Image is empty");
+        encodedImage[i] = processImageBlock(imageChunks[i], quantizationTable);
     }
 
-    auto tranformedImage = dctTransformationHandler.DCTTransformImage(imageVector, compressionLevel);
+    return encodedImage;
+}
 
-    std::vector<std::vector<std::pair<float, int>>> encodedImage = dctEncoding.encodeImageBlocks(tranformedImage);
+std::unique_ptr<BaseCompressedImageHolder> DCTCompression::compress(const Image &image, const CompressionLevel compressionLevel) const
+{
+    // set up
+    const std::vector<std::vector<int>> quantizationTable = QuantizationTable::getQuantizationTable(compressionLevel);
+    const std::vector<std::vector<float>> imageVector = image.getImageAsVector();
+    auto imageChunks = m_imageChopper.chopImage(imageVector, CHUNK_SIZE);
 
-    // fill the compressed image holder
+    // execute
+    auto encodedImage = processImageBlocks(imageChunks, quantizationTable);
+    return createCompressedImageHolder(encodedImage, quantizationTable, imageVector, CHUNK_SIZE);
+}
+
+std::unique_ptr<BaseCompressedImageHolder> DCTCompression::createCompressedImageHolder(
+    const std::vector<std::vector<std::pair<float, int>>> &encodedImage,
+    const std::vector<std::vector<int>> &quantizationTable,
+    const std::vector<std::vector<float>> &imageVector,
+    const int chunkSize) const
+{
+
     auto compressedImageHolder = std::make_unique<CompressedDCTImageHolder>();
-    compressedImageHolder->quantizationTable = QuantizationTable::getQuantizationTable(compressionLevel);
-    compressedImageHolder->compressedImage = encodedImage;
-    compressedImageHolder->OriginalImageDimensions = std::make_pair(static_cast<int>(imageVector.size()), static_cast<int>(imageVector[0].size()));
-    compressedImageHolder->BLOCK_SIZE = 8;
+    compressedImageHolder->quantizationTable = std::move(quantizationTable);
+    compressedImageHolder->compressedImage = std::move(encodedImage);
+    compressedImageHolder->OriginalImageDimensions = {static_cast<int>(imageVector.size()), static_cast<int>(imageVector[0].size())};
+    compressedImageHolder->BLOCK_SIZE = chunkSize;
 
     return compressedImageHolder;
 }
 
 Image DCTCompression::decompress(BaseCompressedImageHolder &compressedData) const
 {
-    // cast to derived type
+    // Cast to derived type, not nice :(
     const auto &compressedImageHolder = dynamic_cast<const CompressedDCTImageHolder &>(compressedData);
 
-    DCTTransformationHandler dctTransformationHandler(compressedImageHolder.BLOCK_SIZE);
+    // Get dimensions and quantization table
+    auto quantizationTable = compressedImageHolder.quantizationTable;
+    int originalHeight = compressedImageHolder.OriginalImageDimensions.first;
+    int originalWidth = compressedImageHolder.OriginalImageDimensions.second;
 
-    RunLengthEnoding runLengthEncoding;
-    ZigzagDCTcoefficientsOrder zigzagOrder;
-    DCTEncoding dctEncoding(runLengthEncoding, zigzagOrder);
+    std::vector<std::vector<std::vector<float>>> decodedBlocks(
+        compressedImageHolder.compressedImage.size());
 
-    auto decoded = dctEncoding.decodeImageBlocks(compressedImageHolder.compressedImage);
+    for (size_t i = 0; i < compressedImageHolder.compressedImage.size(); ++i)
+    {
+        auto runLengthDecoded = m_runlengthEnoding.RunLengthDecode(
+            compressedImageHolder.compressedImage[i]);
 
-    auto ReconstructedImage = dctTransformationHandler.inverseDCTTransformImage(decoded, compressedImageHolder.quantizationTable,
-                                                                                compressedImageHolder.OriginalImageDimensions.first,
-                                                                                compressedImageHolder.OriginalImageDimensions.second);
+        auto dequantizedBlock = m_zigzagDCTcoefficientsOrder.ReverseZigzagtraversal(
+            std::move(runLengthDecoded));
 
-    return Image(ReconstructedImage);
+        decodedBlocks[i] = m_dctTransformationHandler.InverseBlock(
+            std::move(dequantizedBlock), quantizationTable);
+    }
+
+    auto reconstructedImage = m_imageChopper.reconstructImage(
+        decodedBlocks, originalHeight, originalWidth);
+
+    return Image(reconstructedImage);
 }

@@ -6,9 +6,11 @@
 #include "ImageChopper.h"
 #include "DCT.h"
 #include "TwoDimDCT.h"
-#include <opencv2/opencv.hpp>
+#include <future>
+#include <thread>
 #include <vector>
 #include <functional>
+#include <iostream>
 
 class DCTTransformationHandler
 {
@@ -25,6 +27,9 @@ public:
                                                              const CompressionLevel &compressionLevel,
                                                              const int originalHeight,
                                                              const int originalWidth) const;
+    std::vector<std::vector<float>> Forwardblock(const std::vector<std::vector<float>> &imageBlock, const std::vector<std::vector<int>>& quantizationTable) const;
+
+    std::vector<std::vector<float>> InverseBlock(const std::vector<std::vector<float>> &dctBlock, const std::vector<std::vector<int>>& quantizationTable) const;
 
 private:
     TwoDimDCT m_TwoDimDCT;
@@ -32,9 +37,11 @@ private:
     std::vector<std::vector<std::vector<float>>> ApplyDCTToImagechunks(const std::vector<std::vector<std::vector<float>>> &imageChuncks) const;
     std::vector<std::vector<std::vector<float>>> ApplyInverseDCTToImageChunks(const std::vector<std::vector<std::vector<float>>> &DCTImageChuncks) const;
 
-    std::vector<std::vector<std::vector<float>>> QuantizeImageChunks(std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
+    std::vector<std::vector<std::vector<float>>> QuantizeImageChunks(const std::vector<std::vector<std::vector<float>>> &DCTImageChuncks,
                                                                      const std::vector<std::vector<int>> &quantizationTable,
                                                                      std::function<float(float, int)> devideOrMultiply) const;
+
+    std::vector<std::vector<float>> QuantizeChunk(const std::vector<std::vector<float>> &chunk, const std::vector<std::vector<int>> &quantizationTable, std::function<float(float, int)> devideOrMultiply) const;
 
     static std::function<float(float, int)> divide;
     static std::function<float(float, int)> multiply;

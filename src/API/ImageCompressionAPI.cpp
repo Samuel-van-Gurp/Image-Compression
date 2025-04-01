@@ -25,7 +25,7 @@ std::unique_ptr<BaseCompressedImageHolder> ImageCompressionAPI::compress(const I
     return m_CompressionStrategy->compress(image, level);
 }
 
-Image ImageCompressionAPI::decompress(BaseCompressedImageHolder &compressedData)
+Image ImageCompressionAPI::decompress(BaseCompressedImageHolder &compressedData) 
 {
     return m_CompressionStrategy->decompress(compressedData);
 }
