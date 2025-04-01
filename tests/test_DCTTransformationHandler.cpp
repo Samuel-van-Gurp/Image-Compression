@@ -46,36 +46,39 @@ cv::Mat convertToMat(const std::vector<std::vector<float>> &data, int rows, int 
     return image;
 }
 
-TEST(DCTCompressionTest, CompressDecompress)
-{   
-    int IMAGE_BLOCK_SIZE = 8;
+// function no DCTTransformImage no longer in use
+// TODO: make test for the DCTcompression class the 
 
-    // Create a random image
-    cv::Mat inputImage = createRandomImage(1554, 1036);
-    ASSERT_FALSE(inputImage.empty());
+// TEST(DCTCompressionTest, CompressDecompress)
+// {   
+//     int IMAGE_BLOCK_SIZE = 8;
 
-    // Convert cv::Mat to std::vector<std::vector<float>>
-    std::vector<std::vector<float>> inputVector = convertToVector(inputImage);
+//     // Create a random image
+//     cv::Mat inputImage = createRandomImage(1554, 1036);
+//     ASSERT_FALSE(inputImage.empty());
 
-    // Create an instance of DCTCompression
-    DCTTransformationHandler transformHandler(IMAGE_BLOCK_SIZE);
+//     // Convert cv::Mat to std::vector<std::vector<float>>
+//     std::vector<std::vector<float>> inputVector = convertToVector(inputImage);
 
-    // Compress the image
-    std::vector<std::vector<std::vector<float>>> compressedData = transformHandler.DCTTransformImage(inputVector, CompressionLevel::MEDIUM, IMAGE_BLOCK_SIZE);
-    ASSERT_FALSE(compressedData.empty());
+//     // Create an instance of DCTCompression
+//     DCTTransformationHandler transformHandler(IMAGE_BLOCK_SIZE);
 
-    // Decompress the image
-    std::vector<std::vector<float>> decompressedData = transformHandler.inverseDCTTransformImage(compressedData, QuantizationTable::mediumCompressionTable, inputImage.rows, inputImage.cols);
+//     // Compress the image
+//     std::vector<std::vector<std::vector<float>>> compressedData = transformHandler.DCTTransformImage(inputVector, CompressionLevel::MEDIUM, IMAGE_BLOCK_SIZE);
+//     ASSERT_FALSE(compressedData.empty());
 
-    cv::Mat outputImage = convertToMat(decompressedData, inputImage.rows, inputImage.cols);
-    ASSERT_FALSE(outputImage.empty());
+//     // Decompress the image
+//     std::vector<std::vector<float>> decompressedData = transformHandler.inverseDCTTransformImage(compressedData, QuantizationTable::mediumCompressionTable, inputImage.rows, inputImage.cols);
 
-    // Check if the decompressed image has the same size as the original
-    cv::Size inputSize = inputImage.size();
-    cv::Size outputSize = outputImage.size();
+//     cv::Mat outputImage = convertToMat(decompressedData, inputImage.rows, inputImage.cols);
+//     ASSERT_FALSE(outputImage.empty());
 
-    EXPECT_EQ(inputSize, outputSize);
-}
+//     // Check if the decompressed image has the same size as the original
+//     cv::Size inputSize = inputImage.size();
+//     cv::Size outputSize = outputImage.size();
+
+//     EXPECT_EQ(inputSize, outputSize);
+// }
 
 // TEST(DCTCompressionTest, InvalidCompressionLevel)
 // {
