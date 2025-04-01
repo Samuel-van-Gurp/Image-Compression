@@ -13,8 +13,8 @@ class DFTCompression : public ICompressionStrategy
 {
 
 public:
-    std::unique_ptr<BaseCompressedImageHolder> compress(const Image &image, CompressionLevel compressionLevel) const;
-    Image decompress(BaseCompressedImageHolder &sparseRepr) const;
+    std::unique_ptr<BaseCompressedImageHolder> compress(const Image &image, CompressionLevel compressionLevel) const override;
+    Image decompress(BaseCompressedImageHolder &sparseRepr) const override;
 
 private:
     float getCompressionPersentile(CompressionLevel) const;
